@@ -5,7 +5,7 @@ import { useState } from 'react';
 const Content = () => {
   const [clickedLink, setClickedLink] = useState(null);
 
-  const handleClick = (index) => {
+  const handleClick = (index: any) => {
     setClickedLink(index);
   };
 
