@@ -141,7 +141,7 @@ const Content = () => {
               >
                 Nite-Lite
               </a>
-              , <a>Estados Correlacionados</a>, <a>Acción Fungi</a>
+              , <a>Estados Correlacionados</a>
               &nbsp;&nbsp;]
             </span>
           </p>
