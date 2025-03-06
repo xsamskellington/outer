@@ -14,7 +14,7 @@ const Content = () => {
       <div className="text-content">
         <div className="text-info">
           <p>
-            Somos un estudio y laboratorio creativo que explora (y habita) las
+            Somos un estudio y laboratorio creativo que explora y habita las
             fronteras entre la tek y el arte.
           </p>
         </div>
@@ -141,11 +141,47 @@ const Content = () => {
               >
                 Nite-Lite
               </a>
-              , <a>Estados Correlacionados</a>
+              ,{' '}
+              <a
+                href="https://www.newtro.xyz/"
+                target="_blank"
+                onClick={() => handleClick(12)}
+                style={{ color: clickedLink === 12 ? '#fe4141' : '#6bf82c' }}
+              >
+                Newtro Arts
+              </a>
               &nbsp;&nbsp;]
             </span>
           </p>
         </div>
+
+        <div className="text-info">
+          <p>
+            Estos son los últimos proyectos en los que colaboramos{' '}
+            <span className="data">
+              [&nbsp;&nbsp;
+              <a
+                href="https://www.youtube.com/watch?v=zYc1qMe_kpc&ab_channel=CA7RIEL%26PACOAMOROSO"
+                target="_blank"
+                onClick={() => handleClick(13)}
+                style={{ color: clickedLink === 13 ? '#fe4141' : '#6bf82c' }}
+              >
+                Papota
+              </a>
+              ,{' '}
+              <a
+                href="https://www.youtube.com/watch?v=alJS56V2g64&pp=ygUNZWxzYSB5IGVsIG1hcg%3D%3D"
+                target="_blank"
+                onClick={() => handleClick(14)}
+                style={{ color: clickedLink === 14 ? '#fe4141' : '#6bf82c' }}
+              >
+                Elsa y Elmar - Drogada de Emociones
+              </a>
+              &nbsp;&nbsp;]
+            </span>
+          </p>
+        </div>
+
         <div className="about-us">
           <p>
             Escribinos por{' '}
