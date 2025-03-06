@@ -169,6 +169,9 @@ const Content = () => {
                 Ca7riel y Paco Amoroso - Papota
               </a>
               ,{' '}
+              <span className="mobile-break">
+                <br></br>
+              </span>
               <a
                 href="https://www.youtube.com/watch?v=alJS56V2g64&pp=ygUNZWxzYSB5IGVsIG1hcg%3D%3D"
                 target="_blank"
