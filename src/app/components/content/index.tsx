@@ -166,7 +166,7 @@ const Content = () => {
                 onClick={() => handleClick(13)}
                 style={{ color: clickedLink === 13 ? '#fe4141' : '#6bf82c' }}
               >
-                Papota
+                Ca7riel y Paco Amoroso - Papota
               </a>
               ,{' '}
               <a
