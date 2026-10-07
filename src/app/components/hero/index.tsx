@@ -1,108 +1,89 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { DEFAULT_SETTINGS, type Settings } from '../../outer-vj/config';
-import { renderFrame } from '../../outer-vj/engine';
+import { makeGrid, plasma, prepareText, shade, useCanvasLoop, type DrawFn } from './dither';
 import styles from './styles.module.css';
 
-// Calmer than the VJ default so the logo and copy stay readable on top.
-const HERO_SETTINGS: Settings = {
-  ...DEFAULT_SETTINGS,
-  density: 96,
-  speed: 55,
-  autoZoom: 10,
-  moveX: 6,
-  moveY: -3,
-  rotation: 6,
-};
-
+/**
+ * Black hero where the dither field only shows around the pointer, like a flashlight.
+ * With no pointer activity (or on touch) the light drifts on its own.
+ */
 const Hero = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const target = useRef<{ x: number; y: number; at: number } | null>(null);
+  const light = useRef({ x: 0.7, y: 0.45 });
 
   useEffect(() => {
     const canvas = canvasRef.current!;
-    const ctx = canvas.getContext('2d', { alpha: false })!;
-    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const seed = Math.random() * 9999;
-
-    let time = 0;
-    let motionT = 0;
-    let last = performance.now();
-    let frameId = 0;
-    let visible = true;
-
-    const drawOnce = () => renderFrame(ctx, HERO_SETTINGS, time, motionT, seed, true);
-
-    const resize = () => {
+    const onMove = (e: PointerEvent) => {
       const r = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      canvas.width = Math.max(1, Math.floor(r.width * dpr));
-      canvas.height = Math.max(1, Math.floor(r.height * dpr));
-      drawOnce();
+      target.current = {
+        x: (e.clientX - r.left) / r.width,
+        y: (e.clientY - r.top) / r.height,
+        at: performance.now(),
+      };
     };
-
-    const loop = () => {
-      const now = performance.now();
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
-      time += dt * (HERO_SETTINGS.speed / 100) * 2;
-      motionT += dt;
-      drawOnce();
-      frameId = requestAnimationFrame(loop);
-    };
-
-    const start = () => {
-      if (reduceMotion || !visible || frameId) return;
-      last = performance.now();
-      frameId = requestAnimationFrame(loop);
-    };
-    const stop = () => {
-      cancelAnimationFrame(frameId);
-      frameId = 0;
-    };
-
-    // Only animate while the hero is on screen.
-    const io = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
-      if (visible) start();
-      else stop();
-    });
-    const ro = new ResizeObserver(resize);
-    io.observe(canvas);
-    ro.observe(canvas);
-    resize();
-    start();
-
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerdown', onMove);
     return () => {
-      stop();
-      io.disconnect();
-      ro.disconnect();
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerdown', onMove);
     };
   }, []);
+
+  const draw = useCallback<DrawFn>((ctx, w, h, t) => {
+    const { cols, rows, cell } = makeGrid(w, h, h > w ? 56 : 110);
+
+    // Follow the pointer; after 2.5s idle, drift on a slow lissajous path.
+    const tg = target.current;
+    const idle = !tg || performance.now() - tg.at > 2500;
+    const goal = idle
+      ? { x: 0.5 + 0.32 * Math.sin(t * 0.31), y: 0.45 + 0.28 * Math.sin(t * 0.47 + 1) }
+      : tg;
+    light.current.x += (goal.x - light.current.x) * 0.08;
+    light.current.y += (goal.y - light.current.y) * 0.08;
+
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, w, h);
+    prepareText(ctx, cell);
+
+    const lx = light.current.x * w;
+    const ly = light.current.y * h;
+    const radius = Math.min(w, h) * 0.32;
+
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const px = (x + 0.5) * cell;
+        const py = (y + 0.5) * cell;
+        const d = Math.hypot(px - lx, py - ly) / radius;
+        const lit = Math.exp(-d * d) + 0.06;
+        if (lit < 0.08) continue;
+        const s = shade(plasma(x / cols - 0.5, y / rows - 0.5, t * 0.7) * lit, x, y, 2.2);
+        if (!s) continue;
+        ctx.fillStyle = s.color;
+        ctx.fillText(s.ch, px, y * cell);
+      }
+    }
+  }, []);
+
+  useCanvasLoop(canvasRef, draw);
 
   return (
     <header className={styles.hero}>
       <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />
-      <div className={styles.overlay}>
-        <div className={styles.logoWrap}>
-          <Image
-            className={styles.logo}
-            src="/outer_logo_blanco.svg"
-            alt="OUTER"
-            width={1920}
-            height={1080}
-            priority
-          />
-        </div>
+      <nav className={styles.nav}>
+        <a href="#trabajos">Trabajos</a>
+        <a href="/outer-vj">Lab / VJ ↗</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+      <div className={styles.content}>
+        <span className={styles.logo}>
+          <Image src="/outer_logo_blanco.svg" alt="OUTER" width={1920} height={1080} priority />
+        </span>
         <p className={styles.tagline}>
           Estudio y laboratorio creativo que explora y habita las fronteras entre la tek y el arte.
         </p>
-        <nav className={styles.nav}>
-          <a href="#trabajos">Trabajos ↓</a>
-          <a href="/outer-vj">Lab / VJ ↗</a>
-          <a href="#contacto">Contacto</a>
-        </nav>
       </div>
     </header>
   );

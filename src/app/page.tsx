@@ -1,10 +1,10 @@
-import HeroSwitcher from './components/heroes/HeroSwitcher';
+import Hero from './components/hero';
 import Works from './components/works';
 
 export default function Home() {
   return (
     <main>
-      <HeroSwitcher />
+      <Hero />
       <Works />
     </main>
   );
