@@ -1,0 +1,165 @@
+.section {
+  --green: #6bf82c;
+  --visited: #fe4141;
+  --line: #1c1c1c;
+  --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  padding: 3em 5em 5em;
+  max-width: 1100px;
+}
+
+.intro {
+  font-size: 20px;
+  line-height: 1.5;
+  max-width: 34em;
+  margin-bottom: 2em;
+}
+
+/* ---------- Filters ---------- */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em 1.6em;
+  margin-bottom: 1.2em;
+}
+
+.filter,
+.filterActive {
+  background: none;
+  border: 0;
+  padding: 4px 0;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #777;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.filter:hover {
+  color: #ccc;
+}
+
+.filterActive {
+  color: var(--green);
+  border-color: var(--green);
+}
+
+/* ---------- List ---------- */
+
+.list {
+  list-style: none;
+  border-bottom: 1px solid var(--line);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 3em 9em minmax(0, 1fr) 2em;
+  align-items: baseline;
+  gap: 1em;
+  padding: 0.9em 0.6em;
+  border-top: 1px solid var(--line);
+  color: #fafafa;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease, padding 0.2s ease;
+}
+
+.num,
+.cat,
+.arrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: #666;
+  transition: color 0.2s ease;
+}
+
+.cat {
+  text-transform: uppercase;
+}
+
+.title {
+  font-size: 20px;
+}
+
+.arrow {
+  text-align: right;
+}
+
+.badge {
+  margin-left: 0.8em;
+  padding: 2px 6px;
+  border: 1px solid var(--green);
+  color: var(--green);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  vertical-align: 3px;
+}
+
+.row:visited .title {
+  color: var(--visited);
+}
+
+.row:hover,
+.row:focus-visible {
+  background: #0d1a07;
+  padding-left: 1.2em;
+  outline: none;
+}
+
+.row:hover .title,
+.row:hover .num,
+.row:hover .cat,
+.row:hover .arrow,
+.row:focus-visible .title {
+  color: var(--green);
+}
+
+/* ---------- Contact ---------- */
+
+.contact {
+  margin-top: 4em;
+  font-size: 20px;
+}
+
+.contact a {
+  color: var(--green);
+}
+
+@media (max-width: 700px) {
+  .section {
+    padding: 2em 1.25em 4em;
+  }
+
+  .intro,
+  .contact {
+    font-size: 17px;
+  }
+
+  .row {
+    grid-template-columns: 2.2em minmax(0, 1fr) 1.2em;
+    row-gap: 0.2em;
+  }
+
+  .cat {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .title {
+    grid-column: 2;
+    grid-row: 2;
+    font-size: 17px;
+  }
+
+  .arrow {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+}

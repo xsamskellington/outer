@@ -1,0 +1,82 @@
+.hero {
+  position: relative;
+  height: 88vh;
+  height: 88svh;
+  min-height: 460px;
+  background: #000;
+  overflow: hidden;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 5em 4em;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.35) 40%,
+    rgba(0, 0, 0, 0.85) 72%,
+    #000 100%
+  );
+}
+
+.logo {
+  width: min(520px, 80vw);
+  height: auto;
+  /* the SVG has a lot of empty canvas around the wordmark */
+  margin: -9% 0 -7% -6%;
+}
+
+.tagline {
+  max-width: 34em;
+  font-size: 20px;
+  line-height: 1.5;
+  color: #e6e6e6;
+}
+
+.nav {
+  display: flex;
+  gap: 2em;
+  margin-top: 1.6em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.nav a {
+  color: #6bf82c;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition: border-color 0.2s ease;
+}
+
+.nav a:hover {
+  border-color: #6bf82c;
+}
+
+@media (max-width: 700px) {
+  .overlay {
+    padding: 0 1.25em 2.5em;
+  }
+
+  .tagline {
+    font-size: 17px;
+  }
+
+  .nav {
+    gap: 1.4em;
+  }
+}
