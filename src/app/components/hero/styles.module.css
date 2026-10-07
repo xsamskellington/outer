@@ -19,12 +19,10 @@
 }
 
 .nav {
-  position: relative;
-  z-index: 2;
   display: flex;
-  justify-content: flex-end;
   gap: 2em;
-  padding: 1.6em var(--gutter);
+  margin-top: 1.6em;
+  pointer-events: auto;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 12px;
   letter-spacing: 0.12em;
@@ -48,7 +46,7 @@
   z-index: 2;
   left: var(--gutter);
   right: var(--gutter);
-  bottom: 14%;
+  bottom: 2.5rem;
   pointer-events: none;
 }
 
@@ -84,10 +82,7 @@
   }
 
   .nav {
-    gap: 1.2em;
-    padding-top: 1.2em;
-    padding-bottom: 1.2em;
-    font-size: 11px;
+    gap: 1.4em;
   }
 
   .tagline {

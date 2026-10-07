@@ -72,11 +72,6 @@ const Hero = () => {
   return (
     <header className={styles.hero}>
       <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />
-      <nav className={styles.nav}>
-        <a href="#trabajos">Trabajos</a>
-        <a href="/outer-vj">Lab / VJ ↗</a>
-        <a href="#contacto">Contacto</a>
-      </nav>
       <div className={styles.content}>
         <span className={styles.logo}>
           <Image src="/outer_logo_blanco.svg" alt="OUTER" width={1920} height={1080} priority />
@@ -84,6 +79,11 @@ const Hero = () => {
         <p className={styles.tagline}>
           Estudio y laboratorio creativo que explora y habita las fronteras entre la tek y el arte.
         </p>
+        <nav className={styles.nav}>
+          <a href="#trabajos">Trabajos ↓</a>
+          <a href="/outer-vj">Lab / VJ ↗</a>
+          <a href="#contacto">Contacto</a>
+        </nav>
       </div>
     </header>
   );
