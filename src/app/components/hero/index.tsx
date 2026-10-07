@@ -85,14 +85,16 @@ const Hero = () => {
     <header className={styles.hero}>
       <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />
       <div className={styles.overlay}>
-        <Image
-          className={styles.logo}
-          src="/outer_logo_blanco.svg"
-          alt="OUTER"
-          width={1920}
-          height={1080}
-          priority
-        />
+        <div className={styles.logoWrap}>
+          <Image
+            className={styles.logo}
+            src="/outer_logo_blanco.svg"
+            alt="OUTER"
+            width={1920}
+            height={1080}
+            priority
+          />
+        </div>
         <p className={styles.tagline}>
           Estudio y laboratorio creativo que explora y habita las fronteras entre la tek y el arte.
         </p>

@@ -31,11 +31,22 @@
   );
 }
 
+/* The SVG is 1920x1080 but the wordmark only covers x 35-1875, y 249-828,
+   so crop to that box. Percent margins resolve against .logoWrap's width. */
+.logoWrap {
+  width: min(460px, 78vw);
+  aspect-ratio: 1840 / 579;
+  overflow: hidden;
+  margin-bottom: 1.4em;
+}
+
 .logo {
-  width: min(520px, 80vw);
+  display: block;
+  width: calc(100% * 1920 / 1840);
+  max-width: none;
   height: auto;
-  /* the SVG has a lot of empty canvas around the wordmark */
-  margin: -9% 0 -7% -6%;
+  margin-left: calc(-100% * 35 / 1840);
+  margin-top: calc(-100% * 249 / 1840);
 }
 
 .tagline {
