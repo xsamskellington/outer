@@ -286,9 +286,9 @@ export class WirefieldEngine {
     const { clientWidth: w, clientHeight: h } = container;
     this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, options.maxPixelRatio ?? 2));
-    this.renderer.setSize(w, h);
+    // updateStyle=false: CSS sizes the canvas; only the drawing buffer follows the container.
+    this.renderer.setSize(w, h, false);
     this.renderer.setClearColor(0x07090d);
-    this.renderer.domElement.style.display = 'block';
     container.prepend(this.renderer.domElement);
 
     this.camera = new THREE.PerspectiveCamera(55, w / h, 0.1, 500);
@@ -355,7 +355,7 @@ export class WirefieldEngine {
     if (!w || !h) return;
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize(w, h);
+    this.renderer.setSize(w, h, false);
   }
 
   private loop = () => {
