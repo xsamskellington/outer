@@ -459,3 +459,75 @@
     transform: none;
   }
 }
+
+/* ---------- Mobile dock ---------- */
+
+.dock {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .desktop {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  }
+
+  /* the dock replaces the icon row; the tools stay reachable from lab/ */
+  .icons {
+    display: none;
+  }
+
+  .windows {
+    margin-top: 40vh;
+    scroll-margin-top: 12px;
+  }
+
+  .close {
+    display: none;
+  }
+
+  .dock {
+    position: fixed;
+    z-index: 100;
+    left: 12px;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    padding: 5px;
+    background: rgba(10, 10, 10, 0.9);
+    border: 1px solid var(--line);
+    backdrop-filter: blur(10px);
+  }
+
+  .dockItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 0 7px;
+    background: none;
+    border: 1px solid transparent;
+    color: #aaa;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background-color 0.15s, transform 0.1s;
+  }
+
+  .dockItem:active {
+    transform: scale(0.96);
+  }
+
+  .dockGlyph {
+    font-size: 17px;
+    line-height: 1;
+  }
+
+  .dockActive {
+    color: var(--green);
+    border-color: rgba(107, 248, 44, 0.45);
+    background: rgba(107, 248, 44, 0.06);
+  }
+}

@@ -40,6 +40,7 @@ export default function Desktop() {
   const [order, setOrder] = useState<WinId[]>(['about', 'lab', 'trabajos']); // last = front
   const [pos, setPos] = useState<Record<WinId, Point> | null>(null);
   const [clicked, setClicked] = useState<ReadonlySet<string>>(() => new Set());
+  const [isMobile, setIsMobile] = useState(false);
 
   const draw = useCallback<DrawFn>((ctx, _w, _h, t) => renderFrame(ctx, WALLPAPER, t * 0.9, t, 313), []);
   useCanvasLoop(canvasRef, draw, 1);
@@ -47,7 +48,10 @@ export default function Desktop() {
   // Place windows on desktop; on mobile they stack in the page flow instead.
   useEffect(() => {
     const mql = matchMedia(MOBILE_QUERY);
-    const place = () => setPos(mql.matches ? null : initialPositions(innerWidth, innerHeight));
+    const place = () => {
+      setIsMobile(mql.matches);
+      setPos(mql.matches ? null : initialPositions(innerWidth, innerHeight));
+    };
     place();
     mql.addEventListener('change', place);
     return () => mql.removeEventListener('change', place);
@@ -60,7 +64,9 @@ export default function Desktop() {
       setOpen((o) => ({ ...o, [id]: true }));
       focus(id);
       if (matchMedia(MOBILE_QUERY).matches) {
-        requestAnimationFrame(() => document.getElementById(`win-${id}`)?.scrollIntoView({ behavior: 'smooth' }));
+        requestAnimationFrame(() =>
+          document.getElementById('ventanas')?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+        );
       }
     },
     [focus],
@@ -122,8 +128,9 @@ export default function Desktop() {
         </li>
       </ul>
 
-      <div className={styles.windows}>
-        {WINDOWS.filter((w) => open[w.id]).map((w) => (
+      {/* mobile: one window at a time, picked from the dock */}
+      <div id="ventanas" className={styles.windows}>
+        {WINDOWS.filter((w) => (isMobile ? w.id === front : open[w.id])).map((w) => (
           <div key={w.id} id={`win-${w.id}`} className={styles.slot}>
             <Window
               title={w.title}
@@ -140,6 +147,23 @@ export default function Desktop() {
           </div>
         ))}
       </div>
+
+      <nav className={styles.dock} aria-label="Ventanas">
+        {WINDOWS.map((w) => (
+          <button
+            key={w.id}
+            type="button"
+            className={`${styles.dockItem} ${front === w.id ? styles.dockActive : ''}`}
+            aria-current={front === w.id ? 'true' : undefined}
+            onClick={() => show(w.id)}
+          >
+            <span className={styles.dockGlyph} aria-hidden="true">
+              {w.id === 'lab' ? '▤' : '≡'}
+            </span>
+            {w.title}
+          </button>
+        ))}
+      </nav>
     </div>
   );
 }
