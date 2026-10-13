@@ -77,7 +77,8 @@ export default function Desktop() {
 
   // Dimmed in the draw call itself (cheaper than a CSS filter on a full-screen canvas).
   const draw = useCallback<DrawFn>((ctx, w, h, t) => {
-    renderFrame(ctx, WALLPAPER, t * 0.9, t, 313);
+    // fitLongSide: on portrait phones spread the density along the height (~5k cells, not ~26k)
+    renderFrame(ctx, WALLPAPER, t * 0.9, t, 313, true);
     ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
     ctx.fillRect(0, 0, w, h);
   }, []);

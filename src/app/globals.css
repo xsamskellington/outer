@@ -12,7 +12,9 @@ body {
   font-weight: 300;
   background-color: black;
   color: #fafafa;
-  overflow-x: hidden;
+  /* clip (not hidden): stops sideways overflow without making body its own scroll box,
+     so phones keep native scrolling (momentum, collapsing address bar) */
+  overflow-x: clip;
 }
 
 body {

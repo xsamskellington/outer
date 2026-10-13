@@ -151,6 +151,10 @@
   border-bottom: 1px solid var(--line);
   cursor: grab;
   user-select: none;
+}
+
+/* only draggable (desktop) windows need to own touch gestures on the title bar */
+.placed .bar {
   touch-action: none;
 }
 
