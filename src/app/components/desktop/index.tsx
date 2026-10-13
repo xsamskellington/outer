@@ -82,7 +82,7 @@ export default function Desktop() {
     ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
     ctx.fillRect(0, 0, w, h);
   }, []);
-  useCanvasLoop(canvasRef, draw, 1);
+  useCanvasLoop(canvasRef, draw, 1, true);
 
   // Place windows on desktop (and keep them on screen when the browser is resized);
   // on mobile they live in the page flow instead.

@@ -253,10 +253,27 @@
   transition: background-color 0.15s, color 0.15s;
 }
 
-.work:hover,
 .work:focus-visible {
   background: #0d1a07;
   outline: none;
+}
+
+/* hover only where there is a real pointer; on phones a touch while scrolling would leave rows lit */
+@media (hover: hover) {
+  .work:hover {
+    background: #0d1a07;
+  }
+
+  .work:hover .workTitle,
+  .work:hover .num,
+  .work:hover .cat {
+    color: var(--green);
+  }
+
+  .tool:hover canvas {
+    filter: brightness(1);
+    border-color: var(--green);
+  }
 }
 
 .num,
@@ -270,12 +287,6 @@
 
 .workTitle {
   font-size: 15px;
-}
-
-.work:hover .workTitle,
-.work:hover .num,
-.work:hover .cat {
-  color: var(--green);
 }
 
 .opened .workTitle {
@@ -319,7 +330,6 @@
   transition: filter 0.2s, border-color 0.2s;
 }
 
-.tool:hover canvas,
 .tool:focus-visible canvas {
   filter: brightness(1);
   border-color: var(--green);
@@ -511,9 +521,9 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 4px;
     padding: 5px;
-    background: rgba(10, 10, 10, 0.9);
+    /* solid, no backdrop-filter: blurring an animated layer while scrolling is expensive on iOS */
+    background: #0a0a0a;
     border: 1px solid var(--line);
-    backdrop-filter: blur(10px);
   }
 
   .dockItem {

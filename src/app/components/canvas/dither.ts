@@ -60,7 +60,13 @@ export type DrawFn = (ctx: CanvasRenderingContext2D, w: number, h: number, t: nu
  * Sizes the canvas to its box and runs `draw` every frame while it is on screen.
  * With reduced motion it draws a single still frame.
  */
-export function useCanvasLoop(ref: RefObject<HTMLCanvasElement>, draw: DrawFn, maxDpr = 1.5) {
+export function useCanvasLoop(
+  ref: RefObject<HTMLCanvasElement>,
+  draw: DrawFn,
+  maxDpr = 1.5,
+  /** freeze while the page scrolls (for big fixed backgrounds behind scrolling content) */
+  pauseOnScroll = false,
+) {
   useEffect(() => {
     const canvas = ref.current!;
     const ctx = canvas.getContext('2d', { alpha: false })!;
@@ -70,6 +76,8 @@ export function useCanvasLoop(ref: RefObject<HTMLCanvasElement>, draw: DrawFn, m
     let last = performance.now();
     let frameId = 0;
     let visible = true;
+    let scrolling = false;
+    let scrollTimer = 0;
 
     const paint = () => draw(ctx, canvas.width, canvas.height, t);
 
@@ -89,7 +97,7 @@ export function useCanvasLoop(ref: RefObject<HTMLCanvasElement>, draw: DrawFn, m
       frameId = requestAnimationFrame(loop);
     };
     const start = () => {
-      if (reduceMotion || !visible || frameId) return;
+      if (reduceMotion || !visible || scrolling || frameId) return;
       last = performance.now();
       frameId = requestAnimationFrame(loop);
     };
@@ -109,10 +117,23 @@ export function useCanvasLoop(ref: RefObject<HTMLCanvasElement>, draw: DrawFn, m
     resize();
     start();
 
+    const onScroll = () => {
+      scrolling = true;
+      stop();
+      clearTimeout(scrollTimer);
+      scrollTimer = window.setTimeout(() => {
+        scrolling = false;
+        start();
+      }, 160);
+    };
+    if (pauseOnScroll) window.addEventListener('scroll', onScroll, { passive: true });
+
     return () => {
       stop();
+      clearTimeout(scrollTimer);
       io.disconnect();
       ro.disconnect();
+      window.removeEventListener('scroll', onScroll);
     };
-  }, [ref, draw, maxDpr]);
+  }, [ref, draw, maxDpr, pauseOnScroll]);
 }
