@@ -165,18 +165,21 @@ export default function Wirefield() {
 
   const toggleUI = useCallback(() => setPanel(uiVisible ? 'hidden' : 'shown'), [uiVisible]);
 
-  // Keyboard: R random · Space pause · H UI · F fullscreen
+  // Keyboard, with the original's guards: R and Space skip only text/range inputs
+  // (so they still work right after picking from a dropdown); H and F also skip selects.
   useEffect(() => {
     const onKey = (ev: KeyboardEvent) => {
-      const tag = (ev.target as HTMLElement)?.tagName;
-      if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
       const key = ev.key.toLowerCase();
-      if (key === 'r') randomize();
-      else if (key === 'h') toggleUI();
-      else if (key === 'f') toggleFullscreen();
-      else if (ev.code === 'Space') {
-        ev.preventDefault();
-        togglePause();
+      if ((ev.target as HTMLElement)?.tagName !== 'INPUT') {
+        if (key === 'r') randomize();
+        if (ev.code === 'Space') {
+          ev.preventDefault();
+          togglePause();
+        }
+      }
+      if (!['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName ?? '')) {
+        if (key === 'h') toggleUI();
+        if (key === 'f') toggleFullscreen();
       }
     };
     window.addEventListener('keydown', onKey);
