@@ -1,7 +1,4 @@
-'use client';
-
-import { useState } from 'react';
-import styles from './styles.module.css';
+/** Projects shown on the home, newest first. To add one, add a line to WORKS. */
 
 export type Category = 'cine' | 'series' | 'videoclips' | 'instalaciones';
 
@@ -44,59 +41,3 @@ export const WORKS: Work[] = [
   { title: 'Nite-Lite', category: 'instalaciones', url: 'https://www.instagram.com/niteliteclub/' },
   { title: 'Newtro Arts', category: 'instalaciones', url: 'https://www.newtro.xyz/' },
 ];
-
-type Props = {
-  /** urls opened during this visit (shown in red; resets when the page is reloaded) */
-  clicked: ReadonlySet<string>;
-  onOpen: (url: string) => void;
-};
-
-const Works = ({ clicked, onOpen }: Props) => {
-  const [filter, setFilter] = useState<Category | 'todo'>('todo');
-  const visible = filter === 'todo' ? WORKS : WORKS.filter((w) => w.category === filter);
-
-  return (
-    <section className={styles.section}>
-
-      <div className={styles.filters} role="tablist" aria-label="Filtrar trabajos">
-        {FILTERS.map((f) => (
-          <button
-            key={f.value}
-            type="button"
-            role="tab"
-            aria-selected={filter === f.value}
-            className={filter === f.value ? styles.filterActive : styles.filter}
-            onClick={() => setFilter(f.value)}
-          >
-            {f.label}
-          </button>
-        ))}
-      </div>
-
-      <ol className={styles.list}>
-        {visible.map((w, i) => (
-          <li key={w.url}>
-            <a
-              className={`${styles.row} ${clicked.has(w.url) ? styles.opened : ''}`}
-              href={w.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => onOpen(w.url)}
-            >
-              <span className={styles.num}>{String(i + 1).padStart(2, '0')}</span>
-              <span className={styles.cat}>{CATEGORY_LABEL[w.category]}</span>
-              <span className={styles.title}>
-                {w.title}
-                {w.latest && <span className={styles.badge}>nuevo</span>}
-              </span>
-              <span className={styles.arrow} aria-hidden="true">↗</span>
-            </a>
-          </li>
-        ))}
-      </ol>
-
-    </section>
-  );
-};
-
-export default Works;

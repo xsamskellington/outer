@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Roboto } from 'next/font/google';
 import './globals.css';
+
+// Self-hosted by Next (no request to Google at runtime). globals.css already uses Roboto 300.
+const roboto = Roboto({ weight: '300', subsets: ['latin'], display: 'swap' });
 
 const DESCRIPTION =
   'Estudio y laboratorio creativo que explora y habita las fronteras entre la tek y el arte.';
@@ -26,15 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body>{children}</body>
+      <body className={roboto.className}>{children}</body>
     </html>
   );
 }

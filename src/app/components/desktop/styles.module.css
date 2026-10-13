@@ -19,7 +19,15 @@
   width: 100%;
   height: 100%;
   display: block;
-  filter: brightness(0.38) saturate(0.85);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 .wallpaperLogo {
@@ -438,6 +446,10 @@
   .slot {
     display: block;
     scroll-margin-top: 12px;
+  }
+
+  .slot[data-front='false'] {
+    display: none;
   }
 
   .window:not(.placed) {

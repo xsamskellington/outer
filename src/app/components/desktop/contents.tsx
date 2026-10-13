@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { CATEGORY_LABEL, FILTERS, WORKS, type Category } from '../works';
-import { VjPreview, WirefieldPreview } from '../lab';
+import { CATEGORY_LABEL, FILTERS, WORKS, type Category } from '../works/data';
+import { VjPreview, WirefieldPreview } from '../lab/previews';
 import styles from './styles.module.css';
 
 /* ---------- trabajos.txt ---------- */
@@ -36,6 +36,8 @@ export function WorksContent({ clicked, onOpen }: { clicked: ReadonlySet<string>
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => onOpen(w.url)}
+              // middle-click opens a tab too
+              onAuxClick={(ev) => ev.button === 1 && onOpen(w.url)}
             >
               <span className={styles.num}>{String(i + 1).padStart(2, '0')}</span>
               <span className={styles.workTitle}>

@@ -51,8 +51,8 @@ export default function Window({ title, pos, width, z, focused, onFocus, onMove,
         left: pos.x,
         top: pos.y,
         width: `min(${width}px, calc(100% - 32px))`,
-        // never past the bottom edge; the body scrolls instead
-        maxHeight: `calc(100% - ${Math.round(pos.y) + 16}px)`,
+        // a fixed cap, so dragging toward the bottom moves the window instead of squashing it
+        maxHeight: 'calc(100% - 48px)',
         zIndex: z,
       }
     : { zIndex: z };

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { DEFAULT_SETTINGS, type Settings } from '../../outer-vj/config';
 import { renderFrame } from '../../outer-vj/engine';
-import { useCanvasLoop, type DrawFn } from '../hero/dither';
+import { useCanvasLoop, type DrawFn } from '../canvas/dither';
 import Window, { type Point } from './Window';
 import { AboutContent, LabContent, WorksContent } from './contents';
 import styles from './styles.module.css';
@@ -22,15 +22,49 @@ const MOBILE_QUERY = '(max-width: 700px)';
 /** Calm full-screen wallpaper. */
 const WALLPAPER: Settings = { ...DEFAULT_SETTINGS, density: 110, speed: 45, autoZoom: 8, moveX: 5, moveY: -2, rotation: 5 };
 
-/** Opening layout, scaled to the screen: works on the left, lab and about stacked on the right. */
+const MARGIN = 16;
+
+/**
+ * Opening layout. Wide screens: works on the left, lab and about stacked on the right.
+ * Narrower ones (where they can't sit side by side): a cascade that keeps every title bar visible.
+ */
 function initialPositions(w: number, h: number): Record<WinId, Point> {
   const top = 24;
-  const right = Math.max(16, Math.min(w - 560, w * 0.5));
-  return {
-    trabajos: { x: Math.max(16, w * 0.05), y: top + h * 0.03 },
-    lab: { x: right, y: top + h * 0.05 },
-    about: { x: right + Math.min(60, w * 0.04), y: Math.min(h - 240, top + h * 0.05 + 330) },
-  };
+  if (w >= 1100) {
+    const right = Math.min(w - 560, w * 0.5);
+    return clampPositions(
+      {
+        trabajos: { x: w * 0.05, y: top + h * 0.03 },
+        lab: { x: right, y: top + h * 0.05 },
+        about: { x: right + Math.min(60, w * 0.04), y: top + h * 0.05 + 330 },
+      },
+      w,
+      h,
+    );
+  }
+  return clampPositions(
+    {
+      about: { x: w, y: top },
+      lab: { x: w, y: top + 44 },
+      trabajos: { x: MARGIN, y: top + 88 },
+    },
+    w,
+    h,
+  );
+}
+
+/** Keep each window fully on screen horizontally and its title bar reachable vertically. */
+function clampPositions(pos: Record<WinId, Point>, w: number, h: number): Record<WinId, Point> {
+  const out = { ...pos };
+  for (const win of WINDOWS) {
+    const width = Math.min(win.width, w - 2 * MARGIN);
+    const p = pos[win.id];
+    out[win.id] = {
+      x: Math.min(Math.max(p.x, MARGIN), Math.max(MARGIN, w - width - MARGIN)),
+      y: Math.min(Math.max(p.y, MARGIN), Math.max(MARGIN, h - 120)),
+    };
+  }
+  return out;
 }
 
 
@@ -40,21 +74,28 @@ export default function Desktop() {
   const [order, setOrder] = useState<WinId[]>(['about', 'lab', 'trabajos']); // last = front
   const [pos, setPos] = useState<Record<WinId, Point> | null>(null);
   const [clicked, setClicked] = useState<ReadonlySet<string>>(() => new Set());
-  const [isMobile, setIsMobile] = useState(false);
 
-  const draw = useCallback<DrawFn>((ctx, _w, _h, t) => renderFrame(ctx, WALLPAPER, t * 0.9, t, 313), []);
+  // Dimmed in the draw call itself (cheaper than a CSS filter on a full-screen canvas).
+  const draw = useCallback<DrawFn>((ctx, w, h, t) => {
+    renderFrame(ctx, WALLPAPER, t * 0.9, t, 313);
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    ctx.fillRect(0, 0, w, h);
+  }, []);
   useCanvasLoop(canvasRef, draw, 1);
 
-  // Place windows on desktop; on mobile they stack in the page flow instead.
+  // Place windows on desktop (and keep them on screen when the browser is resized);
+  // on mobile they live in the page flow instead.
   useEffect(() => {
     const mql = matchMedia(MOBILE_QUERY);
-    const place = () => {
-      setIsMobile(mql.matches);
-      setPos(mql.matches ? null : initialPositions(innerWidth, innerHeight));
-    };
+    const place = () => setPos(mql.matches ? null : initialPositions(innerWidth, innerHeight));
+    const keepOnScreen = () => setPos((cur) => (cur ? clampPositions(cur, innerWidth, innerHeight) : cur));
     place();
     mql.addEventListener('change', place);
-    return () => mql.removeEventListener('change', place);
+    window.addEventListener('resize', keepOnScreen);
+    return () => {
+      mql.removeEventListener('change', place);
+      window.removeEventListener('resize', keepOnScreen);
+    };
   }, []);
 
   const focus = useCallback((id: WinId) => setOrder((o) => [...o.filter((x) => x !== id), id]), []);
@@ -93,6 +134,7 @@ export default function Desktop() {
 
   return (
     <div className={styles.desktop}>
+      <h1 className={styles.srOnly}>OUTER — estudio y laboratorio creativo</h1>
       <canvas ref={canvasRef} className={styles.wallpaper} aria-hidden="true" />
       <div className={styles.wallpaperLogo} aria-hidden="true">
         <Image src="/outer_logo_blanco.svg" alt="" width={1920} height={1080} priority />
@@ -128,10 +170,10 @@ export default function Desktop() {
         </li>
       </ul>
 
-      {/* mobile: one window at a time, picked from the dock */}
+      {/* mobile: CSS shows only the front window (data-front), picked from the dock */}
       <div id="ventanas" className={styles.windows}>
-        {WINDOWS.filter((w) => (isMobile ? w.id === front : open[w.id])).map((w) => (
-          <div key={w.id} id={`win-${w.id}`} className={styles.slot}>
+        {WINDOWS.filter((w) => open[w.id]).map((w) => (
+          <div key={w.id} id={`win-${w.id}`} className={styles.slot} data-front={front === w.id}>
             <Window
               title={w.title}
               pos={pos?.[w.id] ?? null}
