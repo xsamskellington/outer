@@ -1,0 +1,9 @@
+import { OG_CONTENT_TYPE, OG_SIZE, ogImage } from '../og';
+
+export const alt = 'Wirefield';
+export const size = OG_SIZE;
+export const contentType = OG_CONTENT_TYPE;
+
+export default function Image() {
+  return ogImage({ label: 'OUTER / LAB', title: 'Wirefield — sistema de partículas 3D generativo, por Mati Mast.' });
+}

@@ -81,7 +81,7 @@ const Hero = () => {
         </p>
         <nav className={styles.nav}>
           <a href="#trabajos">Trabajos ↓</a>
-          <a href="/outer-vj">Lab / VJ ↗</a>
+          <a href="#lab">Lab ↓</a>
           <a href="#contacto">Contacto</a>
         </nav>
       </div>

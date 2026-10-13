@@ -1,8 +1,12 @@
 import type { Metadata, Viewport } from 'next';
 import OuterVJ from './OuterVJ';
 
+const DESCRIPTION = 'OUTER VJ — generador ASCII / dither en tiempo real.';
+
 export const metadata: Metadata = {
   title: 'OUTER ASCII DITHER',
+  description: DESCRIPTION,
+  openGraph: { title: 'OUTER VJ', description: DESCRIPTION, url: '/outer-vj', siteName: 'OUTER' },
 };
 
 export const viewport: Viewport = {
