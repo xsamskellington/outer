@@ -27,7 +27,8 @@ export function WorksContent({ clicked, onOpen }: { clicked: ReadonlySet<string>
           </button>
         ))}
       </div>
-      <ol className={styles.works}>
+      {/* empty touchstart listener: iOS Safari only applies :active when one exists */}
+      <ol className={styles.works} onTouchStart={() => {}}>
         {visible.map((w, i) => (
           <li key={w.url}>
             <a
@@ -62,7 +63,7 @@ const TOOLS = [
 
 export function LabContent() {
   return (
-    <div className={styles.lab}>
+    <div className={styles.lab} onTouchStart={() => {}}>
       {TOOLS.map(({ href, name, text, Preview }) => (
         <a key={href} href={href} className={styles.tool}>
           <Preview />

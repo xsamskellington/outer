@@ -258,6 +258,24 @@
   outline: none;
 }
 
+/* touch: light up while the finger is down (needs a touchstart listener on iOS, see contents.tsx) */
+@media (hover: none) {
+  .work:active {
+    background: #0d1a07;
+  }
+
+  .work:active .workTitle,
+  .work:active .num,
+  .work:active .cat {
+    color: var(--green);
+  }
+
+  .tool:active canvas {
+    filter: brightness(1);
+    border-color: var(--green);
+  }
+}
+
 /* hover only where there is a real pointer; on phones a touch while scrolling would leave rows lit */
 @media (hover: hover) {
   .work:hover {
@@ -494,6 +512,9 @@
 
 @media (max-width: 700px) {
   .desktop {
+    /* body is a fixed-height flex column (globals.css); without this the page is clamped to one
+       screen, the content overflows it and the room reserved for the dock never becomes scrollable */
+    flex: none;
     padding-bottom: calc(96px + env(safe-area-inset-bottom));
   }
 
