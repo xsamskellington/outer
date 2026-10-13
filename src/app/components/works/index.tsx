@@ -3,23 +3,23 @@
 import { useState } from 'react';
 import styles from './styles.module.css';
 
-type Category = 'cine' | 'series' | 'videoclips' | 'instalaciones';
+export type Category = 'cine' | 'series' | 'videoclips' | 'instalaciones';
 
-type Work = {
+export type Work = {
   title: string;
   category: Category;
   url: string;
   latest?: boolean;
 };
 
-const CATEGORY_LABEL: Record<Category, string> = {
+export const CATEGORY_LABEL: Record<Category, string> = {
   cine: 'Cine',
   series: 'Serie',
   videoclips: 'Videoclip',
   instalaciones: 'Instalación',
 };
 
-const FILTERS: { value: Category | 'todo'; label: string }[] = [
+export const FILTERS: { value: Category | 'todo'; label: string }[] = [
   { value: 'todo', label: 'Todo' },
   { value: 'cine', label: 'Cine' },
   { value: 'series', label: 'Series' },
@@ -28,7 +28,7 @@ const FILTERS: { value: Category | 'todo'; label: string }[] = [
 ];
 
 // Newest first. To add a project, add a line here.
-const WORKS: Work[] = [
+export const WORKS: Work[] = [
   { title: 'Ca7riel y Paco Amoroso — Papota', category: 'videoclips', latest: true, url: 'https://www.youtube.com/watch?v=zYc1qMe_kpc' },
   { title: 'Elsa y Elmar — Drogada de Emociones', category: 'videoclips', latest: true, url: 'https://www.youtube.com/watch?v=alJS56V2g64' },
   { title: 'Ouke', category: 'videoclips', url: 'https://www.youtube.com/watch?v=7LIERMc27-Q' },

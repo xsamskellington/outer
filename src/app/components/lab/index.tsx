@@ -10,7 +10,7 @@ import styles from './styles.module.css';
 
 const VJ_SETTINGS: Settings = { ...DEFAULT_SETTINGS, density: 64, scan: true };
 
-function VjPreview() {
+export function VjPreview() {
   const ref = useRef<HTMLCanvasElement>(null);
   const draw = useCallback<DrawFn>((ctx, _w, _h, t) => {
     renderFrame(ctx, VJ_SETTINGS, t * 1.4, t, 1234);
@@ -45,7 +45,7 @@ const PARTICLES: Particle[] = (() => {
   });
 })();
 
-function WirefieldPreview() {
+export function WirefieldPreview() {
   const ref = useRef<HTMLCanvasElement>(null);
   const draw = useCallback<DrawFn>((ctx, w, h, t) => {
     ctx.fillStyle = '#07090d';

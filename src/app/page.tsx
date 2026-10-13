@@ -1,13 +1,5 @@
-import Hero from './components/hero';
-import Nav from './components/nav';
-import Sections from './components/sections';
+import Desktop from './components/desktop';
 
 export default function Home() {
-  return (
-    <main>
-      <Hero />
-      <Nav />
-      <Sections />
-    </main>
-  );
+  return <Desktop />;
 }
