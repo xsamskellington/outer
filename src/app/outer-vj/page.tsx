@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import OuterVJ from './OuterVJ';
 
-const DESCRIPTION = 'OUTER VJ — generador ASCII / dither en tiempo real.';
+const DESCRIPTION = 'OUTER VJ — generador ASCII / dither en tiempo real, por Mati Mast.';
 
 export const metadata: Metadata = {
   title: 'OUTER ASCII DITHER',

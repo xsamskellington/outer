@@ -113,7 +113,7 @@ const TOOLS = [
     href: '/outer-vj',
     title: 'OUTER VJ',
     text: 'Generador ASCII / dither en tiempo real para visuales.',
-    credit: null,
+    credit: 'por Mati Mast',
     Preview: VjPreview,
   },
   {
