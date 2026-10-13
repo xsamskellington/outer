@@ -14,13 +14,7 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--green);
-  margin-bottom: 0.8em;
-}
-
-.intro {
-  font-size: 20px;
-  line-height: 1.5;
-  margin-bottom: 1.4em;
+  margin-bottom: 1.2em;
 }
 
 .grid {
@@ -110,10 +104,6 @@
 @media (max-width: 700px) {
   .section {
     padding: 2em 1.25em 0.5em;
-  }
-
-  .intro {
-    font-size: 17px;
   }
 
   .grid {

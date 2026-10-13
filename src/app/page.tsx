@@ -1,15 +1,13 @@
 import Hero from './components/hero';
-import Works from './components/works';
-import Lab from './components/lab';
-import Contact from './components/contact';
+import Nav from './components/nav';
+import Sections from './components/sections';
 
 export default function Home() {
   return (
     <main>
       <Hero />
-      <Works />
-      <Lab />
-      <Contact />
+      <Nav />
+      <Sections />
     </main>
   );
 }

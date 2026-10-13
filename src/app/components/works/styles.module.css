@@ -1,18 +1,11 @@
 .section {
   --green: #6bf82c;
-  --visited: #fe4141;
+  --opened: #fe4141;
   --line: #1c1c1c;
   --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
   padding: 1.5em 5em 2em;
   max-width: 1100px;
-}
-
-.intro {
-  font-size: 20px;
-  line-height: 1.5;
-  max-width: 34em;
-  margin-bottom: 2em;
 }
 
 /* ---------- Filters ---------- */
@@ -101,8 +94,8 @@
   vertical-align: 3px;
 }
 
-.row:visited .title {
-  color: var(--visited);
+.opened .title {
+  color: var(--opened);
 }
 
 .row:hover,
@@ -127,9 +120,6 @@
     padding: 2em 1.25em 1em;
   }
 
-  .intro {
-    font-size: 17px;
-  }
 
   .row {
     grid-template-columns: 2.2em minmax(0, 1fr) 1.2em;

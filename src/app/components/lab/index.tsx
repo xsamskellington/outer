@@ -126,9 +126,8 @@ const TOOLS = [
 ];
 
 const Lab = () => (
-  <section id="lab" className={styles.section}>
+  <section className={styles.section}>
     <h2 className={styles.heading}>Lab</h2>
-    <p className={styles.intro}>Herramientas visuales que corren en el navegador.</p>
     <div className={styles.grid}>
       {TOOLS.map(({ href, title, text, credit, Preview }) => (
         <a key={href} href={href} className={styles.card}>

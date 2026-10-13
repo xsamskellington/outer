@@ -1,0 +1,28 @@
+.content {
+  /* at least a screen tall, so even a short section can scroll to the top */
+  min-height: 100vh;
+  min-height: 100svh;
+  /* room for the sticky nav when scrolled into view */
+  scroll-margin-top: 3.2rem;
+}
+
+.view {
+  animation: fadeIn 0.35s ease both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .view {
+    animation: none;
+  }
+}

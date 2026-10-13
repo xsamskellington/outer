@@ -45,15 +45,18 @@ const WORKS: Work[] = [
   { title: 'Newtro Arts', category: 'instalaciones', url: 'https://www.newtro.xyz/' },
 ];
 
-const Works = () => {
+type Props = {
+  /** urls opened during this visit (shown in red; resets when the page is reloaded) */
+  clicked: ReadonlySet<string>;
+  onOpen: (url: string) => void;
+};
+
+const Works = ({ clicked, onOpen }: Props) => {
   const [filter, setFilter] = useState<Category | 'todo'>('todo');
   const visible = filter === 'todo' ? WORKS : WORKS.filter((w) => w.category === filter);
 
   return (
-    <section id="trabajos" className={styles.section}>
-      <p className={styles.intro}>
-        Hacemos efectos visuales para cine, series y videoclips, e instalaciones audiovisuales.
-      </p>
+    <section className={styles.section}>
 
       <div className={styles.filters} role="tablist" aria-label="Filtrar trabajos">
         {FILTERS.map((f) => (
@@ -73,7 +76,13 @@ const Works = () => {
       <ol className={styles.list}>
         {visible.map((w, i) => (
           <li key={w.url}>
-            <a className={styles.row} href={w.url} target="_blank" rel="noopener noreferrer">
+            <a
+              className={`${styles.row} ${clicked.has(w.url) ? styles.opened : ''}`}
+              href={w.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => onOpen(w.url)}
+            >
               <span className={styles.num}>{String(i + 1).padStart(2, '0')}</span>
               <span className={styles.cat}>{CATEGORY_LABEL[w.category]}</span>
               <span className={styles.title}>

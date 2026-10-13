@@ -76,14 +76,6 @@ const Hero = () => {
         <span className={styles.logo}>
           <Image src="/outer_logo_blanco.svg" alt="OUTER" width={1920} height={1080} priority />
         </span>
-        <p className={styles.tagline}>
-          Estudio y laboratorio creativo que explora y habita las fronteras entre la tek y el arte.
-        </p>
-        <nav className={styles.nav}>
-          <a href="#trabajos">Trabajos ↓</a>
-          <a href="#lab">Lab ↓</a>
-          <a href="#contacto">Contacto</a>
-        </nav>
       </div>
     </header>
   );

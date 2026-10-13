@@ -1,0 +1,97 @@
+.section {
+  --green: #6bf82c;
+  --line: #1c1c1c;
+  --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  padding: 3em 5em 5em;
+  max-width: 1100px;
+}
+
+.heading,
+.subheading {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+
+.heading {
+  margin-bottom: 1em;
+}
+
+.statement {
+  max-width: 34em;
+  font-size: 20px;
+  line-height: 1.5;
+  margin-bottom: 2.2em;
+}
+
+.subheading {
+  margin-bottom: 0.8em;
+}
+
+.list {
+  list-style: none;
+  border-bottom: 1px solid var(--line);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 9em minmax(0, 1fr) 2em;
+  align-items: baseline;
+  gap: 1em;
+  padding: 0.9em 0.6em;
+  border-top: 1px solid var(--line);
+  color: #fafafa;
+  text-decoration: none;
+  transition: background-color 0.2s ease, padding 0.2s ease;
+}
+
+.label,
+.arrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #666;
+  transition: color 0.2s ease;
+}
+
+.value {
+  font-size: 20px;
+}
+
+.arrow {
+  text-align: right;
+}
+
+.row:hover,
+.row:focus-visible {
+  background: #0d1a07;
+  padding-left: 1.2em;
+  outline: none;
+}
+
+.row:hover .label,
+.row:hover .value,
+.row:hover .arrow,
+.row:focus-visible .value {
+  color: var(--green);
+}
+
+@media (max-width: 700px) {
+  .section {
+    padding: 2em 1.25em 4em;
+  }
+
+  .row {
+    grid-template-columns: 6.5em minmax(0, 1fr) 1.2em;
+  }
+
+  .value,
+  .statement {
+    font-size: 17px;
+  }
+}

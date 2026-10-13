@@ -1,0 +1,38 @@
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  gap: 2em;
+  /* breathing room under the hero; margins don't count once it sticks */
+  margin-top: 2.5em;
+  padding: 1.1em 5em;
+  background: rgba(0, 0, 0, 0.92);
+  border-bottom: 1px solid #1c1c1c;
+  backdrop-filter: blur(6px);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.nav a {
+  color: #6bf82c;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition: border-color 0.2s ease;
+}
+
+.nav a:hover,
+.nav a.active {
+  border-color: #6bf82c;
+}
+
+@media (max-width: 700px) {
+  .nav {
+    gap: 1.4em;
+    margin-top: 1.5em;
+    padding: 1em 1.25em;
+  }
+}
