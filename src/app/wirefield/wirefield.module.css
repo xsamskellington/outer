@@ -1,0 +1,505 @@
+/* Effective styles of wirefield_v2_8.html (its stylesheet layers several overrides; this is the result). */
+
+.root {
+  --bg: #000;
+  --panel: #0a0a0a;
+  --raised: #101010;
+  --border: #252525;
+  --muted: #888;
+  --text: #ededed;
+  --lime: #63ff00;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+
+  color-scheme: dark;
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  background: var(--bg);
+  color: var(--text);
+  font: 11px/1.45 var(--mono);
+  /* the site's globals.css sets Roboto 300 on body */
+  font-weight: 400;
+  overflow: hidden;
+}
+
+.uiHidden {
+  grid-template-columns: 1fr;
+}
+
+/* ---------- Sidebar ---------- */
+
+.sidebar {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  scrollbar-width: thin;
+  scrollbar-color: #303030 transparent;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #374044;
+  border-radius: 8px;
+}
+
+.uiHidden .sidebar {
+  display: none;
+}
+
+.scroll {
+  padding: 14px;
+}
+
+.brand {
+  padding: 0 0 14px;
+}
+
+.brandline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.title {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  color: #ededed;
+  font-weight: 700;
+}
+
+.version {
+  font: 9px monospace;
+  color: #888;
+  letter-spacing: 0.1em;
+}
+
+.subtitle {
+  font-size: 9px;
+  color: #888;
+  letter-spacing: 0.1em;
+  margin-top: 5px;
+}
+
+.sectionTitle {
+  margin: 15px 0 8px;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--border);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: #ddd;
+  font-weight: 750;
+}
+
+.label {
+  display: block;
+  margin: 9px 0 5px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #888;
+}
+
+.spaced {
+  margin-top: 12px;
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.value {
+  font: 10px ui-monospace, monospace;
+  color: #888;
+}
+
+/* globals.css zeroes every margin; restore the browser default the original relies on */
+.range {
+  width: 100%;
+  height: 15px;
+  margin: 2px;
+  accent-color: var(--lime);
+  cursor: pointer;
+}
+
+.select,
+.color,
+.btn {
+  min-height: 36px;
+  padding: 7px 9px;
+  background: var(--raised);
+  color: #ddd;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  font: inherit;
+  outline: none;
+}
+
+.select {
+  width: 100%;
+  cursor: pointer;
+}
+
+.select:focus,
+.btn:focus-visible,
+.root input:focus-visible {
+  border-color: var(--lime);
+}
+
+.select:focus {
+  background: #151515;
+}
+
+.color {
+  height: 31px;
+  width: 62px;
+  padding: 2px;
+  cursor: pointer;
+}
+
+.check {
+  width: 15px;
+  height: 15px;
+  margin: 3px 3px 3px 4px;
+  accent-color: var(--lime);
+  cursor: pointer;
+}
+
+.plexControls {
+  margin-top: 8px;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition:
+    background-color 0.12s,
+    border-color 0.12s,
+    color 0.12s,
+    transform 0.18s ease,
+    box-shadow 0.35s ease;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  border-color: var(--lime);
+  background: #151515;
+}
+
+.primary:hover {
+  background: #182314;
+  color: var(--lime);
+}
+
+/* Click feedback, same as OUTER VJ: a quick press plus a faint lime glow that fades out. */
+.btn:active {
+  transform: scale(0.97);
+  background-color: rgba(99, 255, 0, 0.06);
+  box-shadow:
+    0 0 0 1px rgba(99, 255, 0, 0.25),
+    0 0 10px rgba(99, 255, 0, 0.12);
+  transition-duration: 0.12s, 0.12s, 0.12s, 0.06s, 0.06s;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin: 8px 0;
+}
+
+.actions .btn {
+  min-width: 0;
+}
+
+.emitters {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.emitters .btn {
+  flex: 1 0 35px;
+  padding: 8px 5px;
+}
+
+.emitters .active {
+  background: #19300d;
+  color: #a9ff75;
+  border-color: var(--lime);
+}
+
+/* ---------- Presets ---------- */
+
+.presetTools {
+  margin-top: 8px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+}
+
+.presetLabel {
+  display: block;
+  margin: 9px 0 5px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #ddd;
+}
+
+.presetSelect {
+  background: #0d0d0d;
+}
+
+/* ---------- Hints and footer ---------- */
+
+.hint {
+  margin: 18px 0 1em;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  line-height: 1.65;
+  color: #888;
+}
+
+.touchOnly {
+  display: none;
+}
+
+@media (hover: none) {
+  .pointerOnly {
+    display: none;
+  }
+
+  .touchOnly {
+    display: initial;
+  }
+
+  p.touchOnly {
+    display: block;
+  }
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 12px 14px 14px;
+  background: #0a0a0a;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  color: #77847d;
+}
+
+.footer a {
+  color: #999;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  color: var(--lime);
+}
+
+/* ---------- Viewport ---------- */
+
+.view {
+  grid-column: 1;
+  grid-row: 1;
+  position: relative;
+  min-width: 0;
+  background: #000;
+}
+
+.view canvas {
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.viewportLabel {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  pointer-events: none;
+  font: 11px ui-monospace, monospace;
+  letter-spacing: 0.12em;
+  color: #ddd;
+}
+
+.viewportLabel b {
+  color: var(--lime);
+  font-weight: 500;
+}
+
+.top {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 7px;
+}
+
+.topBtn {
+  min-height: 0;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #fff;
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(8px);
+}
+
+.topBtn:hover,
+.topBtn:focus-visible {
+  background: rgba(0, 0, 0, 0.62);
+}
+
+.fps {
+  position: absolute;
+  top: 55px;
+  right: 12px;
+  padding: 8px 11px;
+  background: #080808;
+  border: 1px solid var(--border);
+  color: var(--lime);
+  font: 12px ui-monospace, monospace;
+  pointer-events: none;
+}
+
+.hud {
+  position: absolute;
+  left: 14px;
+  bottom: 12px;
+  pointer-events: none;
+  font: 10px ui-monospace, monospace;
+  letter-spacing: 0.08em;
+  color: #888;
+}
+
+@media (max-width: 980px) {
+  .root {
+    grid-template-columns: minmax(0, 1fr) 280px;
+  }
+
+  .root.uiHidden {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 750px) {
+  .title {
+    font-size: 13px;
+  }
+
+  .top {
+    top: 8px;
+    right: 8px;
+  }
+}
+
+/* ---------- Mobile: full-screen viewport, controls in a bottom sheet ---------- */
+
+@media (max-width: 700px) {
+  .root,
+  .root.uiHidden {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar,
+  .uiHidden .sidebar {
+    /* out of the grid, otherwise it is positioned against an empty 2nd column */
+    grid-area: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    display: block;
+    height: auto;
+    max-height: 60dvh;
+    padding-bottom: env(safe-area-inset-bottom);
+    border-left: 0;
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.6);
+    overscroll-behavior: contain;
+    transform: translateY(100%);
+    visibility: hidden;
+    transition:
+      transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
+      visibility 0s 0.32s;
+  }
+
+  .uiShown .sidebar {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .viewportLabel {
+    top: calc(12px + env(safe-area-inset-top));
+  }
+
+  .top {
+    top: calc(36px + env(safe-area-inset-top));
+    left: 12px;
+    right: 12px;
+    justify-content: flex-end;
+  }
+
+  .fps {
+    top: calc(80px + env(safe-area-inset-top));
+  }
+
+  .hud {
+    bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+
+  /* bigger touch targets */
+  .topBtn {
+    padding: 10px 12px;
+  }
+
+  .btn {
+    min-height: 42px;
+  }
+
+  .range {
+    height: 26px;
+  }
+
+  .select {
+    font-size: 16px; /* stops iOS zooming into the field */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn:active {
+    transform: none;
+  }
+
+  .sidebar,
+  .uiShown .sidebar {
+    transition: none;
+  }
+}
