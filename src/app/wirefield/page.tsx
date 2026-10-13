@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import Wirefield from './Wirefield';
 
 export const metadata: Metadata = {
-  title: 'WIREFIELD — Particle Lab',
+  title: 'WIREFIELD v2.8 — Particle Lab',
   description: 'Realtime generative particle system by Mati Mast · OUTER',
 };
 

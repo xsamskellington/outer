@@ -262,7 +262,7 @@ export class WirefieldEngine {
   globals: GlobalParams = { ...DEFAULT_GLOBALS };
   paused = false;
   orbit = false;
-  fpsEnabled = false;
+  private fpsOn = false;
 
   private readonly renderer: THREE.WebGLRenderer;
   private readonly scene = new THREE.Scene();
@@ -299,6 +299,18 @@ export class WirefieldEngine {
     this.resizeObserver = new ResizeObserver(() => this.resize());
     this.resizeObserver.observe(container);
     this.loop();
+  }
+
+  get fpsEnabled() {
+    return this.fpsOn;
+  }
+
+  /** Like the original, toggling the meter restarts its count. */
+  set fpsEnabled(on: boolean) {
+    if (on === this.fpsOn) return;
+    this.fpsOn = on;
+    this.fpsFrames = 0;
+    this.fpsSeconds = 0;
   }
 
   /** Reconcile the scene with the emitter list from the UI. */
@@ -363,7 +375,7 @@ export class WirefieldEngine {
     const rawDt = this.clock.getDelta();
     const dt = Math.min(rawDt, 0.05);
 
-    if (this.fpsEnabled) {
+    if (this.fpsOn) {
       this.fpsFrames++;
       this.fpsSeconds += rawDt;
       if (this.fpsSeconds >= 0.5) {
