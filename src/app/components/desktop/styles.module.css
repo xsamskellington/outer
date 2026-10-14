@@ -348,18 +348,6 @@
   color: #fe4141;
 }
 
-.badge {
-  margin-left: 0.6em;
-  padding: 1px 5px;
-  border: 1px solid var(--green);
-  color: var(--green);
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  vertical-align: 2px;
-}
-
 /* ---------- lab/ ---------- */
 
 .lab {

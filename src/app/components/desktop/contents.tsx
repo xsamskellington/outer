@@ -43,10 +43,7 @@ export function WorksContent({ clicked, onOpen }: { clicked: ReadonlySet<string>
               onAuxClick={(ev) => ev.button === 1 && onOpen(w.url)}
             >
               <span className={styles.num}>{String(i + 1).padStart(2, '0')}</span>
-              <span className={styles.workTitle}>
-                {w.title}
-                {w.latest && <span className={styles.badge}>nuevo</span>}
-              </span>
+              <span className={styles.workTitle}>{w.title}</span>
               <span className={styles.cat}>{CATEGORY_LABEL[w.category]}</span>
             </a>
           </li>

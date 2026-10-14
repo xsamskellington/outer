@@ -6,7 +6,6 @@ export type Work = {
   title: string;
   category: Category;
   url: string;
-  latest?: boolean;
 };
 
 export const CATEGORY_LABEL: Record<Category, string> = {
@@ -26,8 +25,8 @@ export const FILTERS: { value: Category | 'todo'; label: string }[] = [
 
 // Newest first. To add a project, add a line here.
 export const WORKS: Work[] = [
-  { title: 'Ca7riel y Paco Amoroso — Papota', category: 'videoclips', latest: true, url: 'https://www.youtube.com/watch?v=zYc1qMe_kpc' },
-  { title: 'Elsa y Elmar — Drogada de Emociones', category: 'videoclips', latest: true, url: 'https://www.youtube.com/watch?v=alJS56V2g64' },
+  { title: 'Ca7riel y Paco Amoroso — Papota', category: 'videoclips', url: 'https://www.youtube.com/watch?v=zYc1qMe_kpc' },
+  { title: 'Elsa y Elmar — Drogada de Emociones', category: 'videoclips', url: 'https://www.youtube.com/watch?v=alJS56V2g64' },
   { title: 'Ouke', category: 'videoclips', url: 'https://www.youtube.com/watch?v=7LIERMc27-Q' },
   { title: 'Digan', category: 'videoclips', url: 'https://www.youtube.com/watch?v=V5y2u2B0sTA' },
   { title: 'Colocao', category: 'videoclips', url: 'https://www.youtube.com/watch?v=kh1sF-sbkbw' },
