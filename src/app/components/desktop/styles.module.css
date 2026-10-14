@@ -558,6 +558,11 @@
     display: none;
   }
 
+  /* the player is the one window you close on phones (the dock switches the others) */
+  .videoSlot .close {
+    display: block;
+  }
+
   .dock {
     position: fixed;
     z-index: 100;
@@ -603,4 +608,59 @@
     border-color: rgba(107, 248, 44, 0.45);
     background: rgba(107, 248, 44, 0.06);
   }
+}
+
+/* ---------- video player ---------- */
+
+.kind {
+  display: inline-block;
+  width: 1.4em;
+  margin-left: 0.5em;
+  text-align: center;
+  color: #888;
+}
+
+.work:focus-visible .kind {
+  color: var(--green);
+}
+
+@media (hover: hover) {
+  .work:hover .kind {
+    color: var(--green);
+  }
+}
+
+.player {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.videoFrame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+
+.videoFrame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.watchOn {
+  align-self: flex-end;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #888;
+  text-decoration: none;
+}
+
+.watchOn:hover,
+.watchOn:focus-visible {
+  color: var(--green);
 }

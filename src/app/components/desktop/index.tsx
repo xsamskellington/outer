@@ -6,7 +6,8 @@ import { DEFAULT_SETTINGS, type Settings } from '../../outer-vj/config';
 import { renderFrame } from '../../outer-vj/engine';
 import { useCanvasLoop, type DrawFn } from '../canvas/dither';
 import Window, { type Point } from './Window';
-import { AboutContent, LabContent, LogoContent, WorksContent } from './contents';
+import { AboutContent, LabContent, LogoContent, VideoContent, WorksContent } from './contents';
+import { videoFileName, youtubeId, type Work } from '../works/data';
 import styles from './styles.module.css';
 
 type WinId = 'trabajos' | 'lab' | 'about' | 'logo';
@@ -18,6 +19,10 @@ const WINDOWS: { id: WinId; title: string; width: number; desktopOnly?: boolean 
   // desktop only: on phones the logo stays on the wallpaper
   { id: 'logo', title: 'outer.png', width: 305, desktopOnly: true },
 ];
+
+/** The player is a temporary layer on top of the fixed windows. */
+type LayerId = WinId | 'video';
+type VideoBox = { pos: Point; width: number };
 
 type Sizes = Record<WinId, number>;
 const INITIAL_SIZES = Object.fromEntries(WINDOWS.map((w) => [w.id, w.width])) as Sizes;
@@ -31,6 +36,13 @@ const MOBILE_QUERY = '(max-width: 700px)';
 const WALLPAPER: Settings = { ...DEFAULT_SETTINGS, density: 110, speed: 45, autoZoom: 8, moveX: 5, moveY: -2, rotation: 5 };
 
 const MARGIN = 16;
+
+/** Player window: as big as fits while keeping the video 16:9 (window chrome ≈ 88px tall, 30px wide). */
+function videoLayout(w: number, h: number): VideoBox {
+  const maxVideoHeight = h - 2 * 24 - 88;
+  const width = Math.round(Math.min(w - 64, (maxVideoHeight * 16) / 9 + 30, 1600));
+  return { pos: { x: Math.round((w - width) / 2), y: 24 }, width };
+}
 
 /**
  * Opening layout. Wide screens: works on the left, lab and about stacked on the right.
@@ -84,11 +96,15 @@ function clampPositions(pos: Record<WinId, Point>, sizes: Sizes, w: number, h: n
 export default function Desktop() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [open, setOpen] = useState<Record<WinId, boolean>>({ trabajos: true, lab: true, about: true, logo: true });
-  const [order, setOrder] = useState<WinId[]>(['logo', 'about', 'lab', 'trabajos']); // last = front
+  const [order, setOrder] = useState<LayerId[]>(['logo', 'about', 'lab', 'trabajos']); // last = front
   const [pos, setPos] = useState<Record<WinId, Point> | null>(null);
   const [sizes, setSizes] = useState<Sizes>(INITIAL_SIZES);
   const sizesRef = useRef(sizes);
   sizesRef.current = sizes;
+  const [video, setVideo] = useState<{ work: Work; id: string } | null>(null);
+  const [videoBox, setVideoBox] = useState<VideoBox | null>(null);
+  /** the work link that opened the player; focus returns there on close */
+  const videoTrigger = useRef<HTMLElement | null>(null);
   const [clicked, setClicked] = useState<ReadonlySet<string>>(() => new Set());
 
   // Dimmed in the draw call itself (cheaper than a CSS filter on a full-screen canvas).
@@ -105,8 +121,15 @@ export default function Desktop() {
   useEffect(() => {
     const mql = matchMedia(MOBILE_QUERY);
     const place = () => setPos(mql.matches ? null : initialPositions(innerWidth, innerHeight));
-    const keepOnScreen = () =>
+    const keepOnScreen = () => {
       setPos((cur) => (cur ? clampPositions(cur, sizesRef.current, innerWidth, innerHeight) : cur));
+      setVideoBox((b) => {
+        if (!b) return b;
+        const width = Math.min(b.width, innerWidth - 2 * MARGIN);
+        const x = Math.min(Math.max(b.pos.x, MARGIN), innerWidth - width - MARGIN);
+        return { width, pos: { x, y: Math.min(Math.max(b.pos.y, MARGIN), innerHeight - 120) } };
+      });
+    };
     place();
     mql.addEventListener('change', place);
     window.addEventListener('resize', keepOnScreen);
@@ -116,19 +139,42 @@ export default function Desktop() {
     };
   }, []);
 
-  const focus = useCallback((id: WinId) => setOrder((o) => [...o.filter((x) => x !== id), id]), []);
+  const focus = useCallback((id: LayerId) => setOrder((o) => [...o.filter((x) => x !== id), id]), []);
+
+  const onOpenWork = useCallback((url: string) => setClicked((s) => new Set(s).add(url)), []);
+
+  const openVideo = useCallback(
+    (work: Work, trigger: HTMLElement) => {
+      const id = youtubeId(work.url);
+      if (!id) return;
+      videoTrigger.current = trigger;
+      setVideo({ work, id });
+      const mobile = matchMedia(MOBILE_QUERY).matches;
+      // keep size/position if it is already open and the user arranged it
+      setVideoBox((b) => (mobile ? null : b ?? videoLayout(innerWidth, innerHeight)));
+      focus('video');
+    },
+    [focus],
+  );
+
+  const closeVideo = useCallback(() => {
+    setVideo(null);
+    setOrder((o) => o.filter((x) => x !== 'video'));
+  }, []);
 
   const show = useCallback(
     (id: WinId) => {
       setOpen((o) => ({ ...o, [id]: true }));
       focus(id);
       if (matchMedia(MOBILE_QUERY).matches) {
+        // one window at a time on phones: leaving the player must stop it, not just hide it
+        closeVideo();
         requestAnimationFrame(() =>
           document.getElementById('ventanas')?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
         );
       }
     },
-    [focus],
+    [focus, closeVideo],
   );
 
   // #trabajos / #lab / #about (and old #contacto) open that window.
@@ -143,11 +189,33 @@ export default function Desktop() {
     return () => window.removeEventListener('hashchange', fromHash);
   }, [show]);
 
-  const onOpenWork = useCallback((url: string) => setClicked((s) => new Set(s).add(url)), []);
+  // Focus follows the player: into it when a video opens, back to the work link when it closes.
+  // (An effect runs right after the DOM updates, unlike requestAnimationFrame.)
+  const videoId = video?.id ?? null;
+  const hadVideo = useRef(false);
+  useEffect(() => {
+    const mobile = matchMedia(MOBILE_QUERY).matches;
+    if (videoId) {
+      document.querySelector<HTMLElement>('#win-video button')?.focus({ preventScroll: true });
+      if (mobile) document.getElementById('ventanas')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (hadVideo.current) {
+      const t = videoTrigger.current;
+      if (t?.isConnected) t.focus({ preventScroll: !mobile });
+    }
+    hadVideo.current = videoId !== null;
+  }, [videoId]);
+
+  // Escape closes the player.
+  useEffect(() => {
+    if (!video) return;
+    const onKey = (ev: KeyboardEvent) => ev.key === 'Escape' && closeVideo();
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [video, closeVideo]);
 
   const content = (id: WinId) =>
     id === 'trabajos' ? (
-      <WorksContent clicked={clicked} onOpen={onOpenWork} />
+      <WorksContent clicked={clicked} onOpen={onOpenWork} onPlay={openVideo} />
     ) : id === 'lab' ? (
       <LabContent />
     ) : id === 'about' ? (
@@ -220,6 +288,24 @@ export default function Desktop() {
             </Window>
           </div>
         ))}
+        {video && (
+          <div id="win-video" className={`${styles.slot} ${styles.videoSlot}`} data-front={front === 'video'}>
+            <Window
+              title={videoFileName(video.work.title)}
+              pos={videoBox?.pos ?? null}
+              width={videoBox?.width ?? 0}
+              z={10 + order.indexOf('video')}
+              focused={front === 'video'}
+              onFocus={() => focus('video')}
+              onMove={(p) => setVideoBox((b) => (b ? { ...b, pos: p } : b))}
+              onResize={(width) => setVideoBox((b) => (b ? { ...b, width } : b))}
+              minWidth={360}
+              onClose={closeVideo}
+            >
+              <VideoContent key={video.id} work={video.work} id={video.id} />
+            </Window>
+          </div>
+        )}
       </div>
 
       <nav className={styles.dock} aria-label="Ventanas" data-nosnippet="">

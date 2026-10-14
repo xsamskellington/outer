@@ -2,13 +2,20 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { CATEGORY_LABEL, FILTERS, WORKS, type Category } from '../works/data';
+import { CATEGORY_LABEL, FILTERS, WORKS, youtubeId, type Category, type Work } from '../works/data';
 import { VjPreview, WirefieldPreview } from '../lab/previews';
 import styles from './styles.module.css';
 
 /* ---------- trabajos.txt ---------- */
 
-export function WorksContent({ clicked, onOpen }: { clicked: ReadonlySet<string>; onOpen: (url: string) => void }) {
+type WorksProps = {
+  clicked: ReadonlySet<string>;
+  onOpen: (url: string) => void;
+  /** open a YouTube work in the desktop player; `trigger` gets focus back when it closes */
+  onPlay: (work: Work, trigger: HTMLElement) => void;
+};
+
+export function WorksContent({ clicked, onOpen, onPlay }: WorksProps) {
   const [filter, setFilter] = useState<Category | 'todo'>('todo');
   const visible = filter === 'todo' ? WORKS : WORKS.filter((w) => w.category === filter);
 
@@ -31,23 +38,43 @@ export function WorksContent({ clicked, onOpen }: { clicked: ReadonlySet<string>
       </div>
       {/* empty touchstart listener: iOS Safari only applies :active when one exists */}
       <ol className={styles.works} onTouchStart={() => {}}>
-        {visible.map((w, i) => (
-          <li key={w.url}>
-            <a
-              className={`${styles.work} ${clicked.has(w.url) ? styles.opened : ''}`}
-              href={w.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => onOpen(w.url)}
-              // middle-click opens a tab too
-              onAuxClick={(ev) => ev.button === 1 && onOpen(w.url)}
-            >
-              <span className={styles.num}>{String(i + 1).padStart(2, '0')}</span>
-              <span className={styles.workTitle}>{w.title}</span>
-              <span className={styles.cat}>{CATEGORY_LABEL[w.category]}</span>
-            </a>
-          </li>
-        ))}
+        {visible.map((w, i) => {
+          const playable = youtubeId(w.url) !== null;
+          return (
+            <li key={w.url}>
+              <a
+                className={`${styles.work} ${clicked.has(w.url) ? styles.opened : ''}`}
+                href={w.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(ev) => {
+                  onOpen(w.url);
+                  // plain click on a video plays it here; cmd/ctrl/shift-click still opens a tab
+                  if (playable && !ev.metaKey && !ev.ctrlKey && !ev.shiftKey && !ev.altKey) {
+                    ev.preventDefault();
+                    onPlay(w, ev.currentTarget);
+                  }
+                }}
+                // middle-click opens a tab too
+                onAuxClick={(ev) => ev.button === 1 && onOpen(w.url)}
+              >
+                <span className={styles.num}>{String(i + 1).padStart(2, '0')}</span>
+                <span className={styles.workTitle}>
+                  {w.title}
+                  <span className={styles.srOnly}>
+                    {playable ? ' (reproducir video)' : ' (abre en una pestaña nueva)'}
+                  </span>
+                </span>
+                <span className={styles.cat}>
+                  {CATEGORY_LABEL[w.category]}
+                  <span className={styles.kind} aria-hidden="true">
+                    {playable ? '▶' : '↗'}
+                  </span>
+                </span>
+              </a>
+            </li>
+          );
+        })}
       </ol>
     </div>
   );
@@ -107,6 +134,32 @@ export function LogoContent() {
   return (
     <div className={styles.logoFrame}>
       <Image src="/outer_logo_blanco.svg" alt="OUTER" width={1920} height={1080} priority />
+    </div>
+  );
+}
+
+/* ---------- video player ---------- */
+
+/**
+ * YouTube player, mounted only while its window is open (closing it unmounts the iframe,
+ * which stops playback and frees the player). youtube-nocookie avoids tracking cookies.
+ */
+export function VideoContent({ work, id }: { work: Work; id: string }) {
+  const src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1`;
+  return (
+    <div className={styles.player}>
+      <div className={styles.videoFrame}>
+        <iframe
+          src={src}
+          title={`${work.title} — video`}
+          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+          allowFullScreen
+          referrerPolicy="strict-origin-when-cross-origin"
+        />
+      </div>
+      <a className={styles.watchOn} href={work.url} target="_blank" rel="noopener noreferrer">
+        Ver en YouTube ↗
+      </a>
     </div>
   );
 }

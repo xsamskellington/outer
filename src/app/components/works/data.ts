@@ -40,3 +40,27 @@ export const WORKS: Work[] = [
   { title: 'Nite-Lite', category: 'instalaciones', url: 'https://www.instagram.com/niteliteclub/' },
   { title: 'Newtro Arts', category: 'instalaciones', url: 'https://www.newtro.xyz/' },
 ];
+
+/** YouTube video id for watch / youtu.be links, or null (IMDb, Instagram and sites can't be embedded). */
+export function youtubeId(url: string): string | null {
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace(/^www\./, '');
+    if (host === 'youtu.be') return u.pathname.slice(1) || null;
+    if (host === 'youtube.com' || host === 'm.youtube.com') return u.searchParams.get('v');
+  } catch {}
+  return null;
+}
+
+/** Short file-like name for the player window: the part after '—', e.g. 'papota.mp4'. */
+export function videoFileName(title: string): string {
+  const name = title.includes('—') ? title.split('—').pop()! : title;
+  const slug = name
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+  return `${slug}.mp4`;
+}
