@@ -142,7 +142,7 @@ export default function Desktop() {
       </div>
 
 
-      <ul className={styles.icons}>
+      <ul className={styles.icons} data-nosnippet="">
         {WINDOWS.map((w) => (
           <li key={w.id}>
             <button type="button" className={styles.icon} onClick={() => show(w.id)}>
@@ -191,7 +191,7 @@ export default function Desktop() {
         ))}
       </div>
 
-      <nav className={styles.dock} aria-label="Ventanas">
+      <nav className={styles.dock} aria-label="Ventanas" data-nosnippet="">
         {WINDOWS.map((w) => (
           <button
             key={w.id}

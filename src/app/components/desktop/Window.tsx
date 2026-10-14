@@ -66,7 +66,9 @@ export default function Window({ title, pos, width, z, focused, onFocus, onMove,
       onPointerDown={onFocus}
     >
       <header className={styles.bar} onPointerDown={startDrag}>
-        <span className={styles.barTitle}>{title}</span>
+        <span className={styles.barTitle} data-nosnippet="">
+          {title}
+        </span>
         <button type="button" className={styles.close} onClick={onClose} aria-label={`Cerrar ${title}`}>
           ×
         </button>

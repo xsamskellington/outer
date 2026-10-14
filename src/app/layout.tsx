@@ -5,8 +5,9 @@ import './globals.css';
 // Self-hosted by Next (no request to Google at runtime). globals.css already uses Roboto 300.
 const roboto = Roboto({ weight: '300', subsets: ['latin'], display: 'swap' });
 
+// Same sentence as about.md; it's the text search results should show.
 const DESCRIPTION =
-  'Estudio y laboratorio creativo que explora y habita las fronteras entre la tek y el arte.';
+  'Somos un estudio y laboratorio creativo que explora y habita las fronteras entre la tek y el arte.';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://outer313.com'),

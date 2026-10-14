@@ -11,8 +11,9 @@ export function WorksContent({ clicked, onOpen }: { clicked: ReadonlySet<string>
   const [filter, setFilter] = useState<Category | 'todo'>('todo');
   const visible = filter === 'todo' ? WORKS : WORKS.filter((w) => w.category === filter);
 
+  // data-nosnippet: keep the project list out of Google's result snippet (the about sentence should be it)
   return (
-    <>
+    <div data-nosnippet="">
       <div className={styles.filters} role="tablist" aria-label="Filtrar trabajos">
         {FILTERS.map((f) => (
           <button
@@ -50,7 +51,7 @@ export function WorksContent({ clicked, onOpen }: { clicked: ReadonlySet<string>
           </li>
         ))}
       </ol>
-    </>
+    </div>
   );
 }
 
@@ -63,7 +64,7 @@ const TOOLS = [
 
 export function LabContent() {
   return (
-    <div className={styles.lab} onTouchStart={() => {}}>
+    <div className={styles.lab} onTouchStart={() => {}} data-nosnippet="">
       {TOOLS.map(({ href, name, text, Preview }) => (
         <a key={href} href={href} className={styles.tool}>
           <Preview />
