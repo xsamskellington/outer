@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { CATEGORY_LABEL, FILTERS, WORKS, type Category } from '../works/data';
 import { VjPreview, WirefieldPreview } from '../lab/previews';
 import styles from './styles.module.css';
@@ -99,6 +100,16 @@ export function AboutContent() {
           </a>
         </li>
       </ul>
+    </div>
+  );
+}
+
+/* ---------- outer.png ---------- */
+
+export function LogoContent() {
+  return (
+    <div className={styles.logoFrame}>
+      <Image src="/outer_logo_blanco.svg" alt="OUTER" width={1920} height={1080} priority />
     </div>
   );
 }

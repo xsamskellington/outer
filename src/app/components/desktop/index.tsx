@@ -6,16 +6,24 @@ import { DEFAULT_SETTINGS, type Settings } from '../../outer-vj/config';
 import { renderFrame } from '../../outer-vj/engine';
 import { useCanvasLoop, type DrawFn } from '../canvas/dither';
 import Window, { type Point } from './Window';
-import { AboutContent, LabContent, WorksContent } from './contents';
+import { AboutContent, LabContent, LogoContent, WorksContent } from './contents';
 import styles from './styles.module.css';
 
-type WinId = 'trabajos' | 'lab' | 'about';
+type WinId = 'trabajos' | 'lab' | 'about' | 'logo';
 
-const WINDOWS: { id: WinId; title: string; width: number }[] = [
+const WINDOWS: { id: WinId; title: string; width: number; desktopOnly?: boolean }[] = [
   { id: 'trabajos', title: 'trabajos.txt', width: 500 },
   { id: 'lab', title: 'lab/', width: 440 },
   { id: 'about', title: 'about.md', width: 400 },
+  // desktop only: on phones the logo stays on the wallpaper
+  { id: 'logo', title: 'outer.png', width: 520, desktopOnly: true },
 ];
+
+type Sizes = Record<WinId, number>;
+const INITIAL_SIZES = Object.fromEntries(WINDOWS.map((w) => [w.id, w.width])) as Sizes;
+
+/** Windows reachable from the mobile dock. */
+const MOBILE_WINDOWS = WINDOWS.filter((w) => !w.desktopOnly);
 
 const MOBILE_QUERY = '(max-width: 700px)';
 
@@ -37,27 +45,32 @@ function initialPositions(w: number, h: number): Record<WinId, Point> {
         trabajos: { x: w * 0.05, y: top + h * 0.03 },
         lab: { x: right, y: top + h * 0.05 },
         about: { x: right + Math.min(60, w * 0.04), y: top + h * 0.05 + 330 },
+        // where the wallpaper logo used to be: centred, low
+        logo: { x: (w - INITIAL_SIZES.logo) / 2, y: h - 250 },
       },
+      INITIAL_SIZES,
       w,
       h,
     );
   }
   return clampPositions(
     {
+      logo: { x: w, y: h - 250 },
       about: { x: w, y: top },
       lab: { x: w, y: top + 44 },
       trabajos: { x: MARGIN, y: top + 88 },
     },
+    INITIAL_SIZES,
     w,
     h,
   );
 }
 
 /** Keep each window fully on screen horizontally and its title bar reachable vertically. */
-function clampPositions(pos: Record<WinId, Point>, w: number, h: number): Record<WinId, Point> {
+function clampPositions(pos: Record<WinId, Point>, sizes: Sizes, w: number, h: number): Record<WinId, Point> {
   const out = { ...pos };
   for (const win of WINDOWS) {
-    const width = Math.min(win.width, w - 2 * MARGIN);
+    const width = Math.min(sizes[win.id], w - 2 * MARGIN);
     const p = pos[win.id];
     out[win.id] = {
       x: Math.min(Math.max(p.x, MARGIN), Math.max(MARGIN, w - width - MARGIN)),
@@ -70,9 +83,12 @@ function clampPositions(pos: Record<WinId, Point>, w: number, h: number): Record
 
 export default function Desktop() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [open, setOpen] = useState<Record<WinId, boolean>>({ trabajos: true, lab: true, about: true });
-  const [order, setOrder] = useState<WinId[]>(['about', 'lab', 'trabajos']); // last = front
+  const [open, setOpen] = useState<Record<WinId, boolean>>({ trabajos: true, lab: true, about: true, logo: true });
+  const [order, setOrder] = useState<WinId[]>(['logo', 'about', 'lab', 'trabajos']); // last = front
   const [pos, setPos] = useState<Record<WinId, Point> | null>(null);
+  const [sizes, setSizes] = useState<Sizes>(INITIAL_SIZES);
+  const sizesRef = useRef(sizes);
+  sizesRef.current = sizes;
   const [clicked, setClicked] = useState<ReadonlySet<string>>(() => new Set());
 
   // Dimmed in the draw call itself (cheaper than a CSS filter on a full-screen canvas).
@@ -89,7 +105,8 @@ export default function Desktop() {
   useEffect(() => {
     const mql = matchMedia(MOBILE_QUERY);
     const place = () => setPos(mql.matches ? null : initialPositions(innerWidth, innerHeight));
-    const keepOnScreen = () => setPos((cur) => (cur ? clampPositions(cur, innerWidth, innerHeight) : cur));
+    const keepOnScreen = () =>
+      setPos((cur) => (cur ? clampPositions(cur, sizesRef.current, innerWidth, innerHeight) : cur));
     place();
     mql.addEventListener('change', place);
     window.addEventListener('resize', keepOnScreen);
@@ -119,7 +136,7 @@ export default function Desktop() {
     const fromHash = () => {
       const h = location.hash.slice(1);
       const id = (h === 'contacto' ? 'about' : h) as WinId;
-      if (WINDOWS.some((w) => w.id === id)) show(id);
+      if (MOBILE_WINDOWS.some((w) => w.id === id)) show(id);
     };
     fromHash();
     window.addEventListener('hashchange', fromHash);
@@ -129,7 +146,15 @@ export default function Desktop() {
   const onOpenWork = useCallback((url: string) => setClicked((s) => new Set(s).add(url)), []);
 
   const content = (id: WinId) =>
-    id === 'trabajos' ? <WorksContent clicked={clicked} onOpen={onOpenWork} /> : id === 'lab' ? <LabContent /> : <AboutContent />;
+    id === 'trabajos' ? (
+      <WorksContent clicked={clicked} onOpen={onOpenWork} />
+    ) : id === 'lab' ? (
+      <LabContent />
+    ) : id === 'about' ? (
+      <AboutContent />
+    ) : (
+      <LogoContent />
+    );
 
   const front = order[order.length - 1];
 
@@ -147,7 +172,7 @@ export default function Desktop() {
           <li key={w.id}>
             <button type="button" className={styles.icon} onClick={() => show(w.id)}>
               <span className={styles.iconGlyph} aria-hidden="true">
-                {w.id === 'lab' ? '▤' : '≡'}
+                {w.id === 'lab' ? '▤' : w.id === 'logo' ? '◉' : '≡'}
               </span>
               {w.title}
             </button>
@@ -174,11 +199,17 @@ export default function Desktop() {
       {/* mobile: CSS shows only the front window (data-front), picked from the dock */}
       <div id="ventanas" className={styles.windows}>
         {WINDOWS.filter((w) => open[w.id]).map((w) => (
-          <div key={w.id} id={`win-${w.id}`} className={styles.slot} data-front={front === w.id}>
+          <div
+            key={w.id}
+            id={`win-${w.id}`}
+            className={`${styles.slot} ${w.desktopOnly ? styles.desktopOnly : ''}`}
+            data-front={front === w.id}
+          >
             <Window
               title={w.title}
               pos={pos?.[w.id] ?? null}
-              width={w.width}
+              width={sizes[w.id]}
+              onResize={w.id === 'logo' ? (width) => setSizes((s) => ({ ...s, logo: width })) : undefined}
               z={10 + order.indexOf(w.id)}
               focused={front === w.id}
               onFocus={() => focus(w.id)}
@@ -192,7 +223,7 @@ export default function Desktop() {
       </div>
 
       <nav className={styles.dock} aria-label="Ventanas" data-nosnippet="">
-        {WINDOWS.map((w) => (
+        {MOBILE_WINDOWS.map((w) => (
           <button
             key={w.id}
             type="button"

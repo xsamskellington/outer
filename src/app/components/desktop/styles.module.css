@@ -42,13 +42,50 @@
 }
 
 /* The SVG is 1920x1080 but the wordmark only covers x 35-1875, y 249-828. */
-.wallpaperLogo img {
+.wallpaperLogo img,
+.logoFrame img {
   display: block;
   width: calc(100% * 1920 / 1840);
   max-width: none;
   height: auto;
   margin-left: calc(-100% * 35 / 1840);
   margin-top: calc(-100% * 249 / 1840);
+}
+
+/* desktop: the logo lives in the outer.png window instead */
+@media (min-width: 701px) {
+  .wallpaperLogo {
+    display: none;
+  }
+}
+
+/* ---------- outer.png ---------- */
+
+.logoFrame {
+  aspect-ratio: 1840 / 579;
+  overflow: hidden;
+  margin: 6px 4px 8px;
+}
+
+.resize {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 18px;
+  height: 18px;
+  cursor: nwse-resize;
+  touch-action: none;
+  /* three diagonal grip lines */
+  background:
+    linear-gradient(135deg, transparent 52%, #555 52%, #555 58%, transparent 58%),
+    linear-gradient(135deg, transparent 68%, #555 68%, #555 74%, transparent 74%),
+    linear-gradient(135deg, transparent 84%, #555 84%, #555 90%, transparent 90%);
+  transition: filter 0.15s;
+}
+
+.resize:hover,
+.focused .resize {
+  filter: brightness(1.6) sepia(1) hue-rotate(50deg) saturate(4);
 }
 
 /* ---------- Desktop icons ---------- */
@@ -480,7 +517,8 @@
     scroll-margin-top: 12px;
   }
 
-  .slot[data-front='false'] {
+  .slot[data-front='false'],
+  .desktopOnly {
     display: none;
   }
 
