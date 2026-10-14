@@ -16,7 +16,7 @@ const WINDOWS: { id: WinId; title: string; width: number; desktopOnly?: boolean 
   { id: 'lab', title: 'lab/', width: 440 },
   { id: 'about', title: 'about.md', width: 400 },
   // desktop only: on phones the logo stays on the wallpaper
-  { id: 'logo', title: 'outer.png', width: 520, desktopOnly: true },
+  { id: 'logo', title: 'outer.png', width: 305, desktopOnly: true },
 ];
 
 type Sizes = Record<WinId, number>;
@@ -46,7 +46,7 @@ function initialPositions(w: number, h: number): Record<WinId, Point> {
         lab: { x: right, y: top + h * 0.05 },
         about: { x: right + Math.min(60, w * 0.04), y: top + h * 0.05 + 330 },
         // where the wallpaper logo used to be: centred, low
-        logo: { x: (w - INITIAL_SIZES.logo) / 2, y: h - 250 },
+        logo: { x: (w - INITIAL_SIZES.logo) / 2, y: h - 200 },
       },
       INITIAL_SIZES,
       w,
@@ -55,7 +55,7 @@ function initialPositions(w: number, h: number): Record<WinId, Point> {
   }
   return clampPositions(
     {
-      logo: { x: w, y: h - 250 },
+      logo: { x: w, y: h - 200 },
       about: { x: w, y: top },
       lab: { x: w, y: top + 44 },
       trabajos: { x: MARGIN, y: top + 88 },
