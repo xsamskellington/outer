@@ -165,6 +165,21 @@ export default function Wirefield() {
 
   const toggleUI = useCallback(() => setPanel(uiVisible ? 'hidden' : 'shown'), [uiVisible]);
 
+  // Mobile, like OUTER VJ: a quick tap on the 3D view closes the controls sheet.
+  // Drags (orbit) and pinches (zoom) must not, so only short, almost-still single touches count.
+  const tap = useRef<{ x: number; y: number; at: number; id: number } | null>(null);
+  const onViewPointerDown = (ev: React.PointerEvent) => {
+    tap.current = ev.isPrimary ? { x: ev.clientX, y: ev.clientY, at: performance.now(), id: ev.pointerId } : null;
+  };
+  const onViewPointerUp = (ev: React.PointerEvent) => {
+    const t = tap.current;
+    tap.current = null;
+    if (!t || t.id !== ev.pointerId || !isMobile || !uiVisible) return;
+    if ((ev.target as HTMLElement).closest('button')) return;
+    const moved = Math.hypot(ev.clientX - t.x, ev.clientY - t.y);
+    if (moved < 10 && performance.now() - t.at < 350) setPanel('hidden');
+  };
+
   // Keyboard, with the original's guards: R and Space skip only text/range inputs
   // (so they still work right after picking from a dropdown); H and F also skip selects.
   useEffect(() => {
@@ -331,7 +346,14 @@ export default function Wirefield() {
         </footer>
       </aside>
 
-      <main ref={viewRef} className={styles.view}>
+      <main
+        ref={viewRef}
+        className={styles.view}
+        onPointerDown={onViewPointerDown}
+        onPointerUp={onViewPointerUp}
+        // a second finger means pinch-zoom: never treat it as a tap
+        onPointerCancel={() => (tap.current = null)}
+      >
         <div className={styles.viewportLabel}>
           <b>●</b> LIVE VIEWPORT / 3D
         </div>
