@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { CATEGORY_LABEL, FILTERS, WORKS, youtubeId, type Category, type Work } from '../works/data';
-import { VjPreview, WirefieldPreview } from '../lab/previews';
+import { AsciiFlowPreview, VjPreview, WirefieldPreview } from '../lab/previews';
 import styles from './styles.module.css';
 
 /* ---------- trabajos.txt ---------- */
@@ -85,6 +85,7 @@ export function WorksContent({ clicked, onOpen, onPlay }: WorksProps) {
 const TOOLS = [
   { href: '/outer-vj', name: 'outer-vj', text: 'Generador ASCII / dither en tiempo real.', Preview: VjPreview },
   { href: '/wirefield', name: 'wirefield', text: 'Partículas 3D generativas en tiempo real.', Preview: WirefieldPreview },
+  { href: '/ascii-flow', name: 'ascii-flow', text: 'Texturas ASCII procedurales en tiempo real.', Preview: AsciiFlowPreview },
 ];
 
 export function LabContent() {

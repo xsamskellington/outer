@@ -1,0 +1,416 @@
+/* Styles of outer_ascii_flow_v1_5.html, plus the shared lab extras (click feedback, mobile sheet). */
+
+.root {
+  --lime: #63ff00;
+  --border: #252525;
+  --mono: ui-monospace, Consolas, monospace;
+
+  color-scheme: dark;
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  grid-template-rows: minmax(0, 1fr);
+  background: #000;
+  color: #ddd;
+  font: 11px/1.5 var(--mono);
+  /* the site's globals.css sets Roboto 300 on body */
+  font-weight: 400;
+}
+
+.uiHidden {
+  grid-template-columns: 1fr;
+}
+
+/* ---------- Viewport ---------- */
+
+.view {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #030303;
+}
+
+.canvas {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.live {
+  position: absolute;
+  top: 16px;
+  left: 17px;
+  color: #aaa;
+  letter-spacing: 1px;
+  font-size: 10px;
+  pointer-events: none;
+}
+
+.live b {
+  color: var(--lime);
+}
+
+.toolbar {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  display: flex;
+  gap: 5px;
+}
+
+.toolbar .btn {
+  background: #050505c9;
+}
+
+.hud {
+  position: absolute;
+  bottom: 13px;
+  left: 17px;
+  color: #666;
+  font-size: 9px;
+  pointer-events: none;
+}
+
+.toast {
+  position: absolute;
+  bottom: 38px;
+  left: 17px;
+  color: var(--lime);
+  font-size: 10px;
+}
+
+.hotkeyHint {
+  position: absolute;
+  left: 50%;
+  bottom: 48px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 20px;
+  width: max-content;
+  max-width: calc(100% - 28px);
+  padding: 11px 15px;
+  background: #080808d9;
+  border: 1px solid #ffffff16;
+  color: #999;
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  animation: hintFade 9s forwards;
+}
+
+.hotkeyHint > span {
+  white-space: nowrap;
+}
+
+.hotkeyHint kbd {
+  font: inherit;
+  color: #ccc;
+}
+
+.hintSeparator {
+  margin: 0 8px;
+  color: #555;
+}
+
+@keyframes hintFade {
+  0% {
+    opacity: 0;
+  }
+  8%,
+  77% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* No keyboard on touch screens: the hint would only be noise. */
+@media (hover: none) {
+  .hotkeyHint {
+    display: none;
+  }
+}
+
+/* ---------- Sidebar ---------- */
+
+.sidebar {
+  min-height: 0;
+  background: #0a0a0a;
+  border-left: 1px solid var(--border);
+  overflow: auto;
+  padding: 18px;
+}
+
+.uiHidden .sidebar {
+  display: none;
+}
+
+.title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #eee;
+}
+
+.version {
+  font-size: 9px;
+  color: #666;
+}
+
+.sub {
+  font-size: 9px;
+  color: #777;
+  letter-spacing: 1px;
+}
+
+.section {
+  margin: 19px 0 10px;
+  padding-top: 13px;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  color: #aaa;
+}
+
+.grid {
+  display: grid;
+  gap: 5px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.two {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.four {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.spaced {
+  margin-top: 12px;
+}
+
+.label {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 11px;
+  color: #888;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+
+.output {
+  color: #c8c8c8;
+}
+
+/* globals.css zeroes every margin; this one comes from the original */
+.range {
+  width: 100%;
+  height: 16px;
+  margin: 4px 0;
+  accent-color: var(--lime);
+  cursor: pointer;
+}
+
+.text {
+  width: 100%;
+  background: #101010;
+  border: 1px solid #333;
+  color: #ccc;
+  padding: 8px;
+  font: 12px monospace;
+}
+
+.text:focus-visible {
+  outline: none;
+  border-color: var(--lime);
+}
+
+.color {
+  width: 40px;
+  height: 22px;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* .btn.palette: must beat .btn's padding, as in the original */
+.btn.palette {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin: 5px 0;
+  padding: 7px 9px;
+}
+
+.swatches {
+  display: flex;
+}
+
+.swatches i {
+  display: block;
+  width: 25px;
+  height: 12px;
+}
+
+.note {
+  margin-top: 12px;
+  font-size: 9px;
+  color: #666;
+}
+
+.footer {
+  margin-top: 22px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  color: #777;
+  font-size: 10px;
+}
+
+.footer a {
+  color: #888;
+  text-decoration: none;
+}
+
+.footer a:hover,
+.footer a:focus-visible {
+  color: var(--lime);
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  font: 10px ui-monospace, monospace;
+  color: #bbb;
+  border: 1px solid var(--border);
+  background: #101010;
+  padding: 9px 6px;
+  border-radius: 0;
+  cursor: pointer;
+  transition:
+    color 0.12s,
+    border-color 0.12s,
+    background-color 0.12s,
+    transform 0.18s ease,
+    box-shadow 0.35s ease;
+}
+
+.btn:hover {
+  border-color: #777;
+  color: white;
+}
+
+.btn:focus-visible {
+  outline: none;
+  border-color: var(--lime);
+}
+
+.active {
+  color: var(--lime);
+  border-color: #63ff00;
+  background: #132008;
+}
+
+/* Click feedback, same as the other lab tools. */
+.btn:active {
+  transform: scale(0.97);
+  box-shadow:
+    0 0 0 1px rgba(99, 255, 0, 0.25),
+    0 0 10px rgba(99, 255, 0, 0.12);
+  transition-duration: 0.12s, 0.12s, 0.12s, 0.06s, 0.06s;
+}
+
+/* ---------- Mobile: full-screen texture, controls in a bottom sheet ---------- */
+
+@media (max-width: 700px) {
+  .root,
+  .root.uiHidden {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar,
+  .uiHidden .sidebar {
+    /* out of the grid, otherwise it is positioned against an empty 2nd column */
+    grid-area: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    display: block;
+    max-height: 60dvh;
+    padding-bottom: calc(18px + env(safe-area-inset-bottom));
+    border-left: 0;
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.6);
+    overscroll-behavior: contain;
+    transform: translateY(100%);
+    visibility: hidden;
+    transition:
+      transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
+      visibility 0s 0.32s;
+  }
+
+  .uiShown .sidebar {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .live {
+    font-size: 8px;
+    top: calc(12px + env(safe-area-inset-top));
+    left: 10px;
+  }
+
+  .toolbar {
+    top: calc(32px + env(safe-area-inset-top));
+    right: 8px;
+  }
+
+  .hud {
+    left: 10px;
+    bottom: calc(13px + env(safe-area-inset-bottom));
+    font-size: 8px;
+  }
+
+  /* bigger touch targets */
+  .btn {
+    min-height: 40px;
+  }
+
+  .range {
+    height: 26px;
+  }
+
+  .text {
+    font-size: 16px; /* stops iOS zooming into the field */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hotkeyHint {
+    animation: none;
+  }
+
+  .btn:active {
+    transform: none;
+  }
+
+  .sidebar,
+  .uiShown .sidebar {
+    transition: none;
+  }
+}

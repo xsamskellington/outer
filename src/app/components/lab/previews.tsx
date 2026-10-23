@@ -110,3 +110,61 @@ export function WirefieldPreview({ className }: { className?: string }) {
   useCanvasLoop(ref, draw, 1.5);
   return <canvas ref={ref} className={className} aria-hidden="true" />;
 }
+
+/* ---------- ASCII Flow preview: the FLOW texture in 2D, at thumbnail resolution ---------- */
+
+const FLOW_CHARS = ' .:+*#%@';
+const FLOW_COLORS = ['#23340c', '#6729b8', '#a755ff', '#63ff00', '#c8ff78'];
+
+function flowHash(x: number, y: number) {
+  const n = Math.sin(x * 127.1 + y * 311.7 + 12 * 19.19) * 43758.5453;
+  return n - Math.floor(n);
+}
+
+function flowNoise(x: number, y: number) {
+  const i = Math.floor(x);
+  const j = Math.floor(y);
+  let u = x - i;
+  let v = y - j;
+  u = u * u * (3 - 2 * u);
+  v = v * v * (3 - 2 * v);
+  const a = flowHash(i, j) + (flowHash(i + 1, j) - flowHash(i, j)) * u;
+  const b = flowHash(i, j + 1) + (flowHash(i + 1, j + 1) - flowHash(i, j + 1)) * u;
+  return a + (b - a) * v;
+}
+
+export function AsciiFlowPreview({ className }: { className?: string }) {
+  const ref = useRef<HTMLCanvasElement>(null);
+  const draw = useCallback<DrawFn>((ctx, w, h, t) => {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, w, h);
+    const cols = 46;
+    const cw = w / cols;
+    const ch = cw * 1.85;
+    const rows = Math.ceil(h / ch);
+    ctx.font = `${Math.ceil(ch * 0.95)}px ui-monospace,monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const time = t * 0.35;
+    const k = (2.8 * 3) / h;
+    for (let j = 0; j < rows; j++) {
+      const py = (j + 0.5) * ch;
+      const y = (py - h / 2) * k;
+      for (let i = 0; i < cols; i++) {
+        const px = (i + 0.5) * cw;
+        const x = (px - w / 2) * k + time * 0.22;
+        const qx = flowNoise(x * 0.7 + time * 0.13, y * 0.7);
+        const qy = flowNoise(x * 0.7 + 8, y * 0.7 - time * 0.11);
+        let v = 0.5 + 0.5 * Math.sin(x * 2.2 + y * 0.8 + (qx - qy) * 1.3 * 8 + time * 0.6);
+        v = Math.max(0, Math.min(0.99999, (v - 0.5) * 1.5 + 0.5));
+        const g = Math.floor(v * FLOW_CHARS.length);
+        if (g === 0) continue;
+        const c = v * 1.5 + flowNoise(x * 0.3 + 23, y * 0.3) * 0.6;
+        ctx.fillStyle = FLOW_COLORS[Math.min(4, Math.floor((c - Math.floor(c)) * 5))];
+        ctx.fillText(FLOW_CHARS[g], px, py);
+      }
+    }
+  }, []);
+  useCanvasLoop(ref, draw, 1.5);
+  return <canvas ref={ref} className={className} aria-hidden="true" />;
+}

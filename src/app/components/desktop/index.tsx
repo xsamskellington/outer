@@ -14,7 +14,7 @@ type WinId = 'trabajos' | 'lab' | 'about' | 'logo';
 
 const WINDOWS: { id: WinId; title: string; width: number; desktopOnly?: boolean }[] = [
   { id: 'trabajos', title: 'trabajos.txt', width: 500 },
-  { id: 'lab', title: 'lab/', width: 440 },
+  { id: 'lab', title: 'lab/', width: 600 },
   { id: 'about', title: 'about.md', width: 400 },
   // desktop only: on phones the logo stays on the wallpaper
   { id: 'logo', title: 'outer.png', width: 305, desktopOnly: true },
